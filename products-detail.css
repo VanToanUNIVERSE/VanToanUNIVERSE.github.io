@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.main {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #ccc;
+    padding: 1px;
+}
+
+.hero {
+    background: url("images/product-background.png");
+    background-repeat: none;
+    background-size: cover;
+    width: 60%;
+    margin: 100px auto;
+    border-radius: 20px;
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.left {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.274);
+    border-radius: 20px 0 0 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    
+}
+
+.left .logo {
+    flex: 0.2;
+    font-family: cursive;
+    font-size: 16px;
+    white-space: nowrap;
+    background: linear-gradient(to right, rgb(238, 7, 46), rgb(224, 36, 209), blue);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.left .details {
+    flex: 1;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.left .details .product-name {
+    font-family: "Playwrite IT Moderna", cursive;
+    width: 50%;
+    font-size: 30px;
+    border-bottom: 3px solid black;
+}
+
+.left .details button {
+    color: white;
+    padding: 10px 20px;
+    width: 30%;
+    border: none;
+    outline: none;
+    background: linear-gradient(to right, #ccc, black, #333);
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: all 0.4s;
+
+}
+
+.left .details button:hover {
+    transform: translateY(-9%);
+    transform: scale(1.05);
+    color: blue;
+    background: #bbb;
+}
+
+.right {
+    background-color: rgba(0, 0, 0, 0.274);
+    border-radius: 0 20px 20px 0;
+    padding: 20px;
+    
+}
+
