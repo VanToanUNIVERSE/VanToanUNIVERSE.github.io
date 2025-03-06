@@ -13,19 +13,19 @@
     <main>
         <div class="product-list">
             <div class="card">
-                <img src="images/producct1.png" alt="" width="100px" height="100px">
+                <img src="images/product1.png" alt="" width="100px" height="100px">
                 <p>Số lượng : ?</p>
                 <p>Giá: 32$</p>
             </div>
 
             <div class="card">
-                <img src="images/producct1.png" alt="" width="100px" height="100px">
+                <img src="images/product1.png" alt="" width="100px" height="100px">
                 <p>Số lượng : ?</p>
                 <p>Giá: 32$</p>
             </div>
 
             <div class="card">
-                <img src="images/producct1.png" alt="" width="100px" height="100px">
+                <img src="images/product1.png" alt="" width="100px" height="100px">
                 <p>Số lượng : ?</p>
                 <p>Giá: 32$</p>
             </div>
@@ -34,11 +34,11 @@
 
         <div class="payment-info">
             
-                <p>Tiền trong ví : 89999$  <a href="">Nạp tiền</a></p>
+                <p class="user-wallet">Tiền trong ví : 89999$  <a href="">Nạp tiền</a></p>
                 
             
             
-            <p>Tổng : 99999$</p>
+            <p class="total-price">Tổng : 99999$</p>
             <p>Phương thức thanh toán: </p>
             <form>
                 <label>
@@ -49,8 +49,9 @@
                 </label> <br>
                 
                 <textarea name="address" id="address" rows="3" placeholder="Nhập địa chỉ"></textarea>
+                <small id="address-error">Khong dc trong</small>
                 <br>
-                <button class="btn payment-btn" type="button" onclick="hienHinh()">Thanh toan</button>
+                <button class="btn payment-btn" type="button" onclick="">Thanh toan</button>
               </form>
 
         </div>
@@ -59,17 +60,18 @@
             <div class="validate-payment">
                 <h2>Xác nhận thanh toán</h2>
                 <div class="product-payment-list">
-                    <p><span>3 </span>Tên sản phâm</p>
-                    <p><span>3 </span>Tên sản phâm</p>
-                    <p><span>3 </span>Tên sản phâm</p>
+                    <p class="validate-product"><span class="validate-quantity">3 </span>Tên sản phâm</p>
+                    <p class="validate-product"><span>3 </span class="validate-quantity">Tên sản phâm</p>
+                    <p class="validate-product"><span>3 </span class="validate-quantity">Tên sản phâm</p>
                 </div>
     
-                <h3>999999$</h3>
+                <h3 id="validate-total-price">999999$</h3>
     
                 <p id="validate-address"></p>
     
-                <button type="button" class="validate-btn btn" onclick="">Xác nhận</button>
-                <button class="close-btn btn" onclick="hienHinh()">X</button>
+                <button type="button" class="validate-btn btn" onclick="Payment()">Xác nhận</button>
+                <p class="payment-error">Error</p>
+                <button class="close-btn btn" onclick="hienHinh('')">X</button>
     
             </div>
         </div>
