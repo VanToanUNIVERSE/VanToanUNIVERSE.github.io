@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+IT+Moderna:wght@100..400&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+    <main>
+        <div class="product-list">
+            <div class="card">
+                <img src="images/producct1.png" alt="" width="100px" height="100px">
+                <p>Số lượng : ?</p>
+                <p>Giá: 32$</p>
+            </div>
+
+            <div class="card">
+                <img src="images/producct1.png" alt="" width="100px" height="100px">
+                <p>Số lượng : ?</p>
+                <p>Giá: 32$</p>
+            </div>
+
+            <div class="card">
+                <img src="images/producct1.png" alt="" width="100px" height="100px">
+                <p>Số lượng : ?</p>
+                <p>Giá: 32$</p>
+            </div>
+            
+        </div>
+
+        <div class="payment-info">
+            
+                <p>Tiền trong ví : 89999$  <a href="">Nạp tiền</a></p>
+                
+            
+            
+            <p>Tổng : 99999$</p>
+            <p>Phương thức thanh toán: </p>
+            <form>
+                <label>
+                  <input type="radio" name="payment-method" value="wallet" id="wallet" checked> Ví wallet
+                </label>
+                <label>
+                  <input type="radio" name="payment-method" value="cod" id="cod"> Thanh toán khi nhận
+                </label> <br>
+                
+                <textarea name="address" id="address" rows="3" placeholder="Nhập địa chỉ"></textarea>
+                <br>
+                <button class="btn payment-btn" type="button" onclick="hienHinh()">Thanh toan</button>
+              </form>
+
+        </div>
+
+        <div class="vohinh">
+            <div class="validate-payment">
+                <h2>Xác nhận thanh toán</h2>
+                <div class="product-payment-list">
+                    <p><span>3 </span>Tên sản phâm</p>
+                    <p><span>3 </span>Tên sản phâm</p>
+                    <p><span>3 </span>Tên sản phâm</p>
+                </div>
+    
+                <h3>999999$</h3>
+    
+                <p id="validate-address"></p>
+    
+                <button type="button" class="validate-btn btn" onclick="">Xác nhận</button>
+                <button class="close-btn btn" onclick="hienHinh()">X</button>
+    
+            </div>
+        </div>
+        
+    </main>
+    <script src="js/payment.js"></script>
+</body>
+</html>
