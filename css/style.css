@@ -122,9 +122,9 @@ nav {
     background-color: skyblue;
 }
 
-.user-info {
+.user-info a{
     
-    
+    text-decoration: none;
     position: fixed;
     z-index: 1;
     right: 0;
@@ -136,15 +136,19 @@ nav {
 }
 
 
-.user-info img {
+
+.user-info  img {
     
     border-radius: 50%;
 }
 
 .user-info p {
+    color: #333;
+    text-decoration: none;
     font-size: 1.2rem;
     font-size: bold;
     font-family: cursive;
+    
 }
 
 .more {
