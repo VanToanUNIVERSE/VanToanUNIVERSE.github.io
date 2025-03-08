@@ -14,18 +14,19 @@ main {
 }
 
 .product-list {
-    width: 80%;
-    
-    padding: 10px;
+    width: 80%;  
+    padding: 10px 100px;
     margin: 30px auto;
     background-color: white;
     border-radius: 20px;
     display: flex;
     justify-content: center;
     gap: 5%;
+    overflow-x: scroll;
 }
 
 .product-list .card {
+    flex: 1;
     max-width: 150px;
     padding: 20px;
     border: 1px solid black;
@@ -153,7 +154,7 @@ main {
     left:3%;
 }
 
-.vohinh {
+.display-none {
     display: none;
 }
 
@@ -163,3 +164,89 @@ main {
     bottom: 5%;
     color: red;
 }
+
+/* delivery */
+.delivery-container {
+    background-color: #bbb;
+    padding:  20px 100px ;
+   
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.delivery-head {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    
+}
+
+.delivery-head h3 {
+    flex: 1;
+    text-align: center;
+}
+
+.delivery-item {
+    
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly; 
+    align-items: center;
+}
+
+.delivery-item p, .delivery-icons {
+    
+    font-size: 1.2fr;
+    flex: 1;
+    text-align: center;
+}
+
+
+
+.delivery-item .delivery-icons i {
+    border: 1px solid #333;
+    font-size: 22px;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    
+}
+
+.delivery-item .delivery-icons i:hover {
+    background-color: black;
+    color: white;
+    position: relative;
+    
+}
+
+.payment-detail {
+    
+    background-color: #333;
+    color: rgb(187, 47, 47);
+    width: 90%;
+    margin: 0 auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.close-payment-detail-btn {
+    position: absolute;
+    top: 0;
+    left:3%;
+}
+
