@@ -15,15 +15,15 @@ class Card {
 }
 
 const cards = [
-    new Card(1, "Áo thun", 2, 20, 'images/product1.png'),
-    new Card(2, "Quần jean", 1, 35, 'images/product2.png'),
-    new Card(3, "Giày thể thao", 3, 50, 'images/product3.png'),
-    new Card(1, "Áo thun", 2, 20, 'images/product1.png'),
-    new Card(2, "Quần jean", 1, 35, 'images/product2.png'),
-    new Card(3, "Giày thể thao", 3, 50, 'images/product3.png'),
-    new Card(1, "Áo thun", 2, 20, 'images/product1.png'),
-    new Card(2, "Quần jean", 1, 35, 'images/product2.png'),
-    new Card(3, "Giày thể thao", 3, 50, 'images/product3.png')
+    new Card(1, "Áo thun", 2, 20, 'images/AK1.png'),
+    new Card(2, "Quần jean", 1, 35, 'images/AK2.png'),
+    new Card(3, "Giày thể thao", 3, 50, 'images/AK3.png'),
+    new Card(1, "Áo thun", 2, 20, 'images/AK1.png'),
+    new Card(2, "Quần jean", 1, 35, 'images/AK2.png'),
+    new Card(3, "Giày thể thao", 3, 50, 'images/AK3.png'),
+    new Card(1, "Áo thun", 2, 20, 'images/AK1.png'),
+    new Card(2, "Quần jean", 1, 35, 'images/AK2.png'),
+    new Card(3, "Giày thể thao", 3, 50, 'images/AK3.png')
     
 ];
 
