@@ -22,17 +22,18 @@ main {
     display: flex;
     justify-content: center;
     gap: 5%;
-    overflow-x: scroll;
+    
 }
 
 .product-list .card {
     flex: 1;
-    max-width: 150px;
+    max-width: 200px;
     padding: 20px;
     border: 1px solid black;
     border-radius: 10px;
     transition: all 0.3s;
     cursor: pointer;
+    min-width: 150px;
     
 }
 
