@@ -95,16 +95,26 @@ nav {
     position: relative;
 }
 
-.drop-down:hover .drop-down-content {
-    display: block;
-}
-
 .drop-down-content {
     position: absolute;
     z-index: 1;
     width: 200%;
-    display: none;
+    visibility: hidden;
+    
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s ease-in-out;
+    box-shadow: 1px 2px 4px #ccc;
 }
+
+.drop-down:hover .drop-down-content {
+    visibility: visible;
+    
+    display: block;
+    max-height: 600px;
+}
+
+
 
 .drop-down-content ul {
     display: grid;
