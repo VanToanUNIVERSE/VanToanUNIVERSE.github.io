@@ -10,6 +10,10 @@ html {
     scroll-behavior: smooth;
 }
 
+body {
+    overflow-x: hidden;
+}
+
 header {
     width: 100%;
     
@@ -174,7 +178,80 @@ nav {
     padding: 10px;
     border-radius: 3px;
     transition: all 0.5s;
+}
 
+
+
+.more-content {   
+    background-color: #ccc;
+    position: fixed;
+    height: 100%;
+    width: 25%;
+    top: 0;
+    left: 0;
+    z-index: 2; 
+    flex-direction: column;
+    gap: 30px;
+    padding: 40px  20px;
+    display: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.blur {
+    filter: blur(4px);
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+
+
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    font-weight: bolder;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(-50%, 50%);
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #f51bb0;
+}
+
+.more-content a {
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid white;
+    font-size: 22px;
+    transition: all 0.3s;
+}
+
+.more-content a:hover {
+    color: #f10aea;
 }
 
 .cart {
