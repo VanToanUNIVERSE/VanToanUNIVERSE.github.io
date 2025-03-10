@@ -18,6 +18,8 @@ const cards = [
     new Card(1, "Áo thun", 2, 20, 'images/AK1.png'),
     new Card(2, "Quần jean", 1, 35, 'images/AK2.png'),
     new Card(3, "Giày thể thao", 3, 50, 'images/AK3.png'),
+    new Card(1, "Áo thun", 2, 20, 'images/AK1.png'),
+    new Card(3, "Giày thể thao", 3, 50, 'images/AK3.png'),
     new Card(1, "Áo thun", 2, 20, 'images/AK1.png')
     
     
@@ -68,6 +70,12 @@ const deliveryContainer = document.querySelector('.delivery-container');
 const deliveryHead = document.querySelector('.delivery-head');
 let deliveryItems = document.querySelectorAll('.delivery-item');
 const deleleDelivery = document.querySelector('.fa-trash');
+
+
+const scrollContainer = document.querySelector(".product-list");//lay E de xuly overflow
+const beforeElement = document.querySelector('.before');//lay E cua nut tiep
+const afterElement = document.querySelector('.after');//lay E cua nut lui
+//lay E chua thong tin nhưng product can validate
 
 
 // xoa card khoi danh sach
@@ -190,24 +198,6 @@ function Payment() {
     }
      
 }
-function LoadPage() {
-    
-    
-    clear(productList);// clear
-    clear(productPaymentList);
-    
-    //tao sp
-    //them san pham va hien thi
-    cards.forEach((card) => {
-        addToList(card, productList);
-    });
-
-    //add even
-    addEven();
-
-    //hien thi tien va so du
-    displayInfomation();
-}
 
 //delivery
 
@@ -250,6 +240,11 @@ function createDelivery() {
 
             <button class="close-payment-detail-btn btn" onclick="closePMD()">X</button>`;
     const paymentProductList = document.getElementById('payment-product-list');
+    paymentProductList.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        paymentProductList.scrollLeft += e.deltaY;
+        
+    });
     clear(productPaymentList);
     payment.cards.forEach(card => {
         addToList(card, paymentProductList);
@@ -316,14 +311,64 @@ function closePMD() {
     
 }
 
+
+
+function createOverflowForProductList() {
+    const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+    function updateButtonState(clickedButton) {
+        if(clickedButton == 'before') {
+            afterElement.style.color = '#333';
+            beforeElement.style.color = scrollContainer.scrollLeft <= scrollContainer.offsetWidth/3 ? '#3333331e' : '#333';
+        }
+        if(clickedButton == 'after') {
+            beforeElement.style.color = '#333';
+            afterElement.style.color = scrollContainer.scrollLeft >= maxScrollLeft - scrollContainer.offsetWidth/3 ? '#3333331e' : '#333';
+        }
+    }
+
+    afterElement.addEventListener('click', () => {
+        scrollContainer.scrollLeft += scrollContainer.offsetWidth/3;  
+        updateButtonState('after');
+    });
+
+    beforeElement.addEventListener('click', () => {
+        scrollContainer.scrollLeft -= scrollContainer.offsetWidth/3;
+        updateButtonState('before');
+    });
+    
+    scrollContainer.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        scrollContainer.scrollLeft += e.deltaY;
+        beforeElement.style.color = scrollContainer.scrollLeft <= 0 ? "#3333331e" : "#333";
+        afterElement.style.color = scrollContainer.scrollLeft >= maxScrollLeft - 10 ? "#3333331e" : "#333";
+    });
+
+    //validate
+    
+}
+
+
+
+function LoadPage() {
+    
+    
+    clear(productList);// clear
+    clear(productPaymentList);
+    
+    //tao sp
+    //them san pham va hien thi
+    cards.forEach((card) => {
+        addToList(card, productList);
+    });
+
+    createOverflowForProductList();
+
+    //add even
+    addEven();
+
+    //hien thi tien va so du
+    displayInfomation();
+}
+
+    
 LoadPage();
-
-
-// Gọi khi trang load
-
-
-
-
-
-
-
