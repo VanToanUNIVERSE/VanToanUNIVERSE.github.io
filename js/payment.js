@@ -329,11 +329,17 @@ function createOverflowForProductList() {
     afterElement.addEventListener('click', () => {
         scrollContainer.scrollLeft += scrollContainer.offsetWidth/3;  
         updateButtonState('after');
+
+        /* afterElement.classList.add('animate');
+        setTimeout(() => {afterElement.classList.remove('animate');}, 500); */
     });
 
     beforeElement.addEventListener('click', () => {
         scrollContainer.scrollLeft -= scrollContainer.offsetWidth/3;
         updateButtonState('before');
+
+        /* beforeElement.classList.add('animate');
+        setTimeout(() => {beforeElement.classList.remove('animate');}, 500); */
     });
     
     scrollContainer.addEventListener('wheel', (e) => {
@@ -372,3 +378,14 @@ function LoadPage() {
 
     
 LoadPage();
+
+
+//lam mau
+const beforeAndAfter = document.querySelectorAll('.effect-btn');
+
+beforeAndAfter.forEach(bt => {
+    bt.addEventListener('click', () => {
+        bt.classList.add('effect');
+        setTimeout(() => {bt.classList.remove('effect');}, 500);
+    });
+});

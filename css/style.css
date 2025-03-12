@@ -12,28 +12,31 @@ html {
 
 body {
     overflow-x: hidden;
+    font-family: "Poppins", cursive;
+    
 }
 
 header {
     width: 100%;
-    
 }
 .nav-container {
     color: #333;
+    background-color: rgba(255, 255, 255, 0.479);
     border: 2px solid #ccc;
+    backdrop-filter: blur(5px);
     padding: 5px 10px;
     border-radius: 30px;
     width: 70%;
-    margin: 10px auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
     position: fixed;
     box-shadow: 0px 4px 4px #888787;
-    left: 50%;
-    transform: translateX(-50%);
+    inset: 0;
+    margin: 10px auto;
+    height: 10vh;
     z-index: 1;
+    transition: all 0.3s;
 }
 .logo {
     
@@ -85,7 +88,7 @@ nav {
     font-size: 1.2rem;
     transition: all 0.3s;
 }
-.menu li a:hover {
+.menu  a:hover {
     color: #fe4a8f;
     transform: translateY(-10%);
 }
@@ -191,14 +194,27 @@ nav {
     left: 0;
     z-index: 2; 
     flex-direction: column;
-    gap: 30px;
+    gap: 0;
     padding: 40px  20px;
     display: none;
     transition: all 0.3s ease-in-out;
 }
 
+.more-content a {
+    padding: 20px 0;
+    color: #333;
+}
+
+header .more-content a:hover {
+    background-color: #e232bf;
+    color: black;
+}
+
 .blur {
     filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+    transform: translateX(25%);
 }
 
 @keyframes slideIn {
@@ -276,7 +292,8 @@ nav {
 
 main {
     width: 100%;
-
+    transform: translate(0);
+    transition: all 0.3s;
 }
 .introduce {
     width: 90%;
@@ -452,6 +469,7 @@ background: rgba(255, 255, 255, 0.1);
 
 footer {
     background-color: #ff85a2;
+    transition: all 0.3s;
 }
 
 .footer-top {
