@@ -51,7 +51,6 @@ main {
     justify-content: start;
     overflow-x: scroll;
     gap: 5%;
-    
     border-radius: 20px;
     scroll-behavior: smooth;
 }

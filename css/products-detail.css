@@ -6,7 +6,7 @@
 
 .main {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     background-color: #ccc;
     padding: 1px;
 }
@@ -16,7 +16,7 @@
     background-repeat: none;
     background-size: cover;
     width: 60%;
-    margin: 100px auto;
+    margin: 40px auto 0;
     border-radius: 20px;
     
     display: grid;
@@ -27,7 +27,7 @@
     font-weight: bold;
     background-color: rgba(0, 0, 0, 0.274);
     border-radius: 20px 0 0 20px;
-    padding: 20px;
+    padding: 20px 40px;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -91,19 +91,53 @@
 .right {
     background-color: rgba(0, 0, 0, 0.274);
     border-radius: 0 20px 20px 0;
-    padding: 20px;
+    padding: 20px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
+.right .wrap {
+    display: flex;
+    position: relative;
+}
+
+.right .wrap button{
+    position: absolute;
+    font-size: 30px;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.right .wrap .before {
+    top: 50%;
+    left: -10%;
+    transform: translateY(-50%) rotate(180deg);
+    opacity: 0.1;
+}
+
+.right .wrap .after {
+    bottom: 50%;
+    right: -10%;
+    transform: translateY(50%);
+}
+
 .right .product-image-container {
     flex: 1;
-    padding: 20px;
     border-bottom: 2px solid #ccc;
-    border-radius: 10px;
+    padding-bottom: 20px;
     position: relative;
+    display: flex;
+    justify-content: start;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    gap: 10%;
+}
+
+.right .product-image-container::-webkit-scrollbar {
+    display: none;
 }
 
 .right .product-image-container img {
