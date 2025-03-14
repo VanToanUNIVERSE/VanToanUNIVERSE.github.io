@@ -1,112 +1,138 @@
-/* const nameError = document.getElementById('name-error');
-const phoneError = document.getElementById('phone-error');
-const emailError = document.getElementById('email-error');
-const addressError = document.getElementById('address-error');
-const submitError = document.getElementById('submit-error');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const confirmPasswordInput = document.getElementById('confirm-password');
+const confirmPasswordErrorSpan = document.getElementById('confirm-password-error');
+const usernameErrorSpan = document.getElementById('username-error');
+const passwordErrorSpan = document.getElementById('password-error');
+const loginErrorSpan = document.getElementById('login-error');
+const sigupErrorSpan = document.getElementById('signup-error');
 
-function validateName() {
-    const name = document.getElementById('contact-name').value;
+console.log(confirmPasswordErrorSpan, confirmPasswordInput);
 
-
-    if(name.length == 0) {
-        nameError.innerHTML = 'Name is required';
-        return false;
-    }
-    if(!name.match(/^[A-Za-z]*\s{1}[A-Za-z]+$/)) {
-        nameError.innerHTML = 'Write full name';
-        return false;
-    }
-    nameError.innerHTML = '<i class="fa-solid fa-check"></i>';
-    return true;
-}
-
-function validatePhone() {
-    const phone = document.getElementById('contact-phone').value;
-
-    if(phone.length == 0) {
-        phoneError.innerHTML = 'Phone is required';
-        return false;
-    }
-    if(phone.length != 10) {
-        phoneError.innerHTML = 'Phone number should be 10 digits';
-        return false;
-    }
-    if(!phone.match(/^[0-9]{10}$/)) {
-        phoneError.innerHTML = 'Only digits please';
-        return false;
-    }
-    phoneError.innerHTML = '<i class="fa-solid fa-check"></i>';
-    return true;
-}
-
-function validateEmail() {
-    const email = document.getElementById('contact-email').value;
-
-    if(email.length == 0) {
-        emailError.innerHTML = 'Email is required';
-        return false;
-    }
-    if(!email.match(/^[A-Za-z\._\-[0-9]*[@][A-Za-z]*[\.][a-z]{3}$/))
+function validateUsername() 
+{
+    const username = usernameInput.value.trim();
+    if(username == "")
     {
-        emailError.innerHTML = 'Email invalid';
+        usernameErrorSpan.innerHTML = 'username cannot empty';
         return false;
     }
-    emailError.innerHTML = '<i class="fa-solid fa-check"></i>';
-    return true;
-}
-
-function validateAddress() {
-    const address = document.getElementById('address').value;
-    const required = 10;
-    let left = required - address.length;
-
-    if(address.length < required) {
-        addressError.innerHTML = `${left} more characters required`;
-        return false;
-    }
-    addressError.innerHTML = '<i class="fa-solid fa-check"></i>';
-    return true;
-}
-
-function validateForm() {
-    if(!validateName() || !validatePhone() || !validateEmail() || !validateAddress()) {
-        submitError.style.display = 'block';
-        submitError.innerHTML = 'Please fix errors to submit';
-        setTimeout(() => {submitError.style.display = 'none';}, 3000);
-        return false;
-    }
-} */
-
-
-const emailError = document.getElementById("email-error");
-const passwordError = document.getElementById("password-error");
-const loginError = document.getElementById("login-error");
-
-function validateEmail() {
-    const email = document.getElementById('contact-email').value;
-    if(email.length == 0) {
-        emailError.innerHTML = 'Email is required';
-        return false;
-    }
-    if(!email.match(/^[A-Za-z\._\-[0-9]*[@][A-Za-z]*[\.][a-z]{3}$/))
+    if(username.includes(" "))
     {
-        emailError.innerHTML = 'Email invalid';
+        usernameErrorSpan.innerHTML = 'username canot have spaces';
         return false;
     }
-    emailError.innerHTML = '<i class="fa-solid fa-check"></i>';
+    usernameErrorSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
     return true;
 }
 
 function validatePassword() {
-    const password = document.getElementById("password").value;
-    if(password.length == 0) {
-        passwordError.innerHTML = "Password is required";
+    const password = passwordInput.value.trim();
+    if(password == "")
+    {
+        passwordErrorSpan.innerHTML = 'password cannot empty';
         return false;
     }
-    if(!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
-        passwordError.innerHTML = "Password Invalid";
+    if(password.includes(" "))
+    {
+        passwordErrorSpan.innerHTML = 'password cannot have spaces';
         return false;
     }
-    passwordError.innerHTML = '<i class="fa-solid fa-check"></i>';
+    if(!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/))
+        {
+            passwordErrorSpan.innerHTML = 'have at least 1 leter and 1 num';
+            return false;
+        }
+    passwordErrorSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
     return true;
 }
+
+function validateConfirmPassword() {
+    const confirmPassword = confirmPasswordInput.value.trim();
+    const password = passwordInput.value.trim();
+    if(confirmPassword != password) 
+    {
+        confirmPasswordErrorSpan.innerHTML = "not match";
+        return false;
+    }
+    else 
+    {
+        confirmPasswordErrorSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
+        return true;
+    }
+}
+
+function validateLogin() {
+    if(!validateUsername() || !validatePassword()) 
+    {
+        loginErrorSpan.innerHTML = 'please fix error';
+        setTimeout(() => {loginErrorSpan.innerHTML = ''}, 2000)
+        return false;
+    }
+    return true;
+}
+
+function validateSignup() {
+    
+    if(!validateUsername() || !validatePassword() || !validateConfirmPassword()) 
+        {
+            sigupErrorSpan.innerHTML = 'please fix error';
+            setTimeout(() => {sigupErrorSpan.innerHTML = ''}, 2000)
+            return false;
+        }
+        alert("Sign up success");
+        return true;
+}
+
+function checkAccount(e) {
+    e.preventDefault();
+    if(validateLogin()) 
+    {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+        const user = accounts.find(acount => acount.username === username && acount.password === password);
+        if(user)
+        {
+            alert("Login Success");
+            window.location.href = "index.html";
+        }
+        else
+        {
+            alert("account does not exist");
+        }
+    } 
+}
+
+
+
+function addAccount(e) 
+{
+    e.preventDefault();
+    if(validateSignup()) 
+    {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+        const account = new Account(username, password);
+        
+        accounts.push(account);
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+
+        
+    }
+    const bien = JSON.parse(localStorage.getItem('accounts'));
+        console.log(bien);
+}
+
+//Test login
+
+class Account 
+{
+    username;
+    password;
+    constructor(username, password) {
+        this.username = username;
+        this.password = password;
+    }
+}
+
+const accounts = JSON.parse(localStorage.getItem('accounts')) || [];

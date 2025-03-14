@@ -48,11 +48,11 @@
 }
 
 .input-group label {
-    flex-basis: 28%;
+    flex-basis: 35%;
 }
 
 .input-group input, .input-group textarea {
-    flex-basis: 68%;
+    flex-basis: 60%;
     background: transparent;
     border: 0;
     outline: 0;
@@ -87,11 +87,15 @@ form button {
     color: red;
 }
 
-#submit-error {
+.submit-error {
     display: block;
     text-align: center;
     font-size: 14px;
     color: red;
+    position: absolute;
+    left: 50%;
+    bottom: 3%;
+    transform: translateX(-50%);
 }
 
 .fa-check {
