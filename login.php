@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,21 +10,21 @@
 </head>
 <body>
     <div class="container">
-        <form action="">
+        <form action="includes/login.php" method="POST">
             <i class="fa-solid fa-paper-plane"></i>
             <div class="input-group">
                 <label for="username">User name: </label>
-                <input type="text" placeholder="Enter your user name" id="username" onkeyup="validateUsername()">
+                <input type="text" placeholder="Enter your user name" id="username" name="username" onkeyup="validateUsername()">
                 <span id="username-error"></span>
             </div>
             <div class="input-group">
                 <label for="password">Password: </label>
-                <input type="password" placeholder="Enter your password" id="password" onkeyup="validatePassword()">
+                <input type="password" placeholder="Enter your password" id="password" name="password" onkeyup="validatePassword()">
                 <span id="password-error"></span>
             </div> 
-            <button type="submit" onclick="checkAccount(event);">Login</button>
+            <button type="submit" name="submit" onclick="validateLogin(event);">Login</button>
             <span id="login-error" class="submit-error"> </span>
-            <a href="signup.html">Don't have account?</a>
+            <a href="signup.php">Don't have account?</a>
         </form>
     </div>
     <script src="js/login-signup.js"></script>

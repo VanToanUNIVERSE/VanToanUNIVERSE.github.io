@@ -62,9 +62,10 @@ function validateConfirmPassword() {
     }
 }
 
-function validateLogin() {
+function validateLogin(e) {
     if(!validateUsername() || !validatePassword()) 
     {
+        e.preventDefault();
         loginErrorSpan.innerHTML = 'please fix error';
         setTimeout(() => {loginErrorSpan.innerHTML = ''}, 2000)
         return false;
@@ -84,8 +85,8 @@ function validateSignup() {
         return true;
 }
 
-function checkAccount(e) {
-    e.preventDefault();
+/* function checkAccount(e) {
+    
     if(validateLogin()) 
     {
         const username = usernameInput.value.trim();
@@ -100,8 +101,12 @@ function checkAccount(e) {
         {
             alert("account does not exist");
         }
-    } 
-}
+    }
+    else
+    {
+        e.preventDefault();
+    }
+} */
 
 
 

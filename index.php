@@ -1,3 +1,15 @@
+
+<?php
+    require "includes/database.php";
+    if(isset($connection))
+    {
+        $sql = "select * from categories";
+        $statement = $connection->prepare($sql);
+        $statement->execute();
+        $categoriesData = $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,16 +26,16 @@
 <body>
     <header>
         <i class="fa-regular fa-square-caret-down more"></i>
-        <a href="payment.html"><i class="fa-solid fa-cart-shopping cart"></i></a>
+        <a href="payment.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
         <div class="more-content">
-            <a target="_blank" href="login.html">Đăng nhập</a>
-            <a target="_blank" href="payment.html">Giỏ hàng</a>
+            <a target="_blank" href="login.php">Đăng nhập</a>
+            <a target="_blank" href="payment.php">Giỏ hàng</a>
             <a target="_blank" href="">Sản phẩm yêu thích</a>
             <a target="_blank" href="">Nạp tiền</a>
             <button class="close-btn" onclick="showAndClose('more-content')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="user-info">
-            <a href="profile.html">
+            <a href="profile.php">
                 <img src="images/avata.png" alt="avata" width="50px" height="50px">
                 <div><p>user name</p></div>
             </a>
@@ -38,19 +50,23 @@
                 <ul class="menu">
                     <li><a href="">Home</a></li>
                     <div class="drop-down">
-                        <li><a href="product.html">Products <i class="fa-solid fa-caret-down"></i></a></li>
+                        <li><a href="product.php">Products <i class="fa-solid fa-caret-down"></i></a></li>
                         <div class="drop-down-content">
                             <ul>
-                                <li><a href="">Drop down 1</a></li>
-                                <li><a href="">Drop down 2</a></li>
-                                <li><a href="">Drop down 3</a></li>
-                                <li><a href="">Drop down 4</a></li>
+                                    <?php
+                                        foreach($categoriesData as $dt)
+                                        {
+                                            echo '<li><a href="product.php" id="'.$dt["id"].'">'.$dt["name"].'</a></li>';
+                                            echo '<script>console.log(document.querySelector(".drop-down-content"))</script>';
+                                        }
+                                    ?>
+                                
                             </ul>
                         </div>
                     </div>
                     
-                    <li><a href="payment.html">Cart</a></li>
-                    <li><a href="about.html">About</a></li>
+                    <li><a href="payment.php">Cart</a></li>
+                    <li><a href="about.php">About</a></li>
                 </ul>
             </nav>
             <div class="social">
@@ -70,7 +86,7 @@
                 <h3>A place where you can buy any clothes you want</h3>
                 <div class="negavi">
                     <a href="#products">Shopping now</a>
-                    <a id="login" href="login.html">Login</a>
+                    <a id="login" href="login.php">Login</a>
                 </div>
                 
             </div>
@@ -121,7 +137,7 @@
                 <p>product cost</p>
             </div>
            
-            <a href="product.html" class="more-products">Xem thêm <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="product.php" class="more-products">Xem thêm <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </main>
     <footer>

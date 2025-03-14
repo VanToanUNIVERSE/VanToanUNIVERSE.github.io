@@ -28,7 +28,7 @@
             </div> 
             <button type="submit" onclick="addAccount(event)">Sign up</button>
             <span id="signup-error" class="submit-error"></span>
-            <a href="login.html">Have a count? Login</a>
+            <a href="login.php">Have a count? Login</a>
         </form>
     </div>
     <script src="js/login-signup.js"></script>
