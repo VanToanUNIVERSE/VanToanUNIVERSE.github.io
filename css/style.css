@@ -397,6 +397,7 @@ background: rgba(255, 255, 255, 0.1);
     row-gap: 5%;
     column-gap: 2%;
     padding: 100px 80px;
+    position: relative;
 
 }
 
@@ -450,6 +451,12 @@ background: rgba(255, 255, 255, 0.1);
 .card .like-add-to-card i:hover {
     color:rgb(249, 107, 131);
     background-color: white;
+}
+
+.more-products {
+    position: absolute;
+    right: 10%;
+    bottom: 5%;
 }
 
 /* css for footer */
@@ -511,3 +518,4 @@ footer {
     text-align: center;
     padding: 20px;
 }
+
