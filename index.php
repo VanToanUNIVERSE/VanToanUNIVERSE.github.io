@@ -1,19 +1,16 @@
 <?php
     session_start();
-    $_SESSION["id"]  ?? '';
-    $_SESSION["username"]  ?? '';
-    $_SESSION["password"] ?? '';
-    $_SESSION["email"] ?? '';
-    $_SESSION["fullName"]  ?? '';
-    $_SESSION["phone"]   ?? '';
-    $_SESSION["address"]  ?? '';
-    $_SESSION["role"]   ?? '';
-    $_SESSION["wallet"]  ?? '';
+    $username = $_SESSION["username"]  ?? '';
+    $image = $_SESSION["image"] ?? 'defaultAvata.png';
     require "includes/database.php";
     
-    if(isset($connection))
+    if(!$connection)
     {
-        $sql = "select * from categories";
+        die("Loi ket noi voi databasse");
+    }
+    else
+    {
+        $sql = "select * from categories where active = 1";
         $statement = $connection->prepare($sql);
         $statement->execute();
         $categoriesData = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -46,8 +43,8 @@
         </div>
         <div class="user-info">
             <a href="profile.php">
-                <img src="images/avata.png" alt="avata" width="50px" height="50px">
-                <div><p><?php echo $_SESSION["username"];?></p></div>
+                <img src="<?php echo "images/avata/$image" ?>" alt="avata" width="50px" height="50px">
+                <div><p><?php echo $username;?></p></div>
             </a>
             
         </div>
@@ -60,7 +57,7 @@
                 <ul class="menu">
                     <li><a href="">Home</a></li>
                     <div class="drop-down">
-                        <li><a href="product.php">Products <i class="fa-solid fa-caret-down"></i></a></li>
+                        <li><a href="product.php">Categories <i class="fa-solid fa-caret-down"></i></a></li>
                         <div class="drop-down-content">
                             <ul>
                                     <?php

@@ -8,12 +8,6 @@
         $statement = $connection->prepare($sql);
         $statement->execute();
         $usersData = $statement->fetchAll();
-        foreach($usersData as $userData)
-        {
-            $username = $userData["username"];
-            $password = $userData["password"];
-            /* echo "$username - $password"; */
-        }
     }
     catch(PDOException $e)
     {
@@ -22,11 +16,20 @@
 
     if(isset($_POST["submit"])) 
     {
+        if(empty($_POST["username"]) || empty($_POST["password"])) {
+            $_SESSION["error"] = "Vui lòng nhập đầy đủ thông tin";
+            header("Location: ../login.php");
+            exit();
+        }
+    
+        $username = trim($_POST["username"]);
+        $password = trim($_POST["password"]);
         foreach($usersData as $userData) 
         {
-            if($userData["username"] == $_POST["username"] && $userData["password"] == $_POST["password"])
+            echo $userData["username"].$userData["password"];
+            if($userData["username"] == $username && $userData["password"] == $password)
             {
-                $_SESSION["id"] = $userData["id"] ?? '';
+                $_SESSION["userID"] = $userData["userID"] ?? '';
                 $_SESSION["username"] = $userData["username"] ?? '';
                 $_SESSION["password"] = $userData["password"] ?? '';
                 $_SESSION["email"] = $userData["email"] ?? '';
@@ -34,13 +37,16 @@
                 $_SESSION["phone"] = $userData["phone"] ?? '';
                 $_SESSION["address"] = $userData["address"] ?? '';
                 $_SESSION["role"] = $userData["role"] ?? '';
+                $_SESSION["image"] = $userData["image"] ?? 'defaultAvata.png';
                 $_SESSION["wallet"] = $userData["wallet"] ?? '';
-                echo $_SESSION["username"];
-                var_dump($_SESSION);
                 header("Location: ../index.php");
                 exit();
-            }
+            }  
+                
         }
+        $_SESSION["error"] = "Tai khoan nay khong ton tai";
+        header("Location: ../login.php");
+        exit();
     }
 
 ?>
