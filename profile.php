@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    require "includes/database.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,12 +22,22 @@
                 <img src="images/avata.png" alt="avata" width="100px" height="100px">
             </div>
             <div class="info-container">
-                <h3 class="user-name">User full name</h3>
+                <?php
+                    echo '
+                        <h3 class="user-name">'.$_SESSION["fullName"].'</h3>
+                        <p>SDT: '.$_SESSION["phone"].'</p>
+                        <p>Email: '.$_SESSION["email"].'</p>
+                        <address>'.$_SESSION["address"].'</address>
+                        <p>Số tiền trong ví: '.$_SESSION["wallet"].' $</p>
+                        <button class="edit-profile-btn">Chỉnh sửa hồ sơ</button>
+                    ';
+                ?>
+                <!-- <h3 class="user-name">User full name</h3>
                 <p>SDT: 0932 324 534</p>
                 <p>Email: jessica@gmail.com</p>
                 <address>Địa chỉ hiện tại</address>
                 <p>Số tiền trong ví: 99 $</p>
-                <button class="edit-profile-btn">Chỉnh sửa hồ sơ</button>
+                <button class="edit-profile-btn">Chỉnh sửa hồ sơ</button> -->
             </div>   
         </div>
 

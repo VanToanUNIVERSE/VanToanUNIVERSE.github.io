@@ -1,6 +1,16 @@
-
 <?php
+    session_start();
+    $_SESSION["id"]  ?? '';
+    $_SESSION["username"]  ?? '';
+    $_SESSION["password"] ?? '';
+    $_SESSION["email"] ?? '';
+    $_SESSION["fullName"]  ?? '';
+    $_SESSION["phone"]   ?? '';
+    $_SESSION["address"]  ?? '';
+    $_SESSION["role"]   ?? '';
+    $_SESSION["wallet"]  ?? '';
     require "includes/database.php";
+    
     if(isset($connection))
     {
         $sql = "select * from categories";
@@ -37,7 +47,7 @@
         <div class="user-info">
             <a href="profile.php">
                 <img src="images/avata.png" alt="avata" width="50px" height="50px">
-                <div><p>user name</p></div>
+                <div><p><?php echo $_SESSION["username"];?></p></div>
             </a>
             
         </div>
