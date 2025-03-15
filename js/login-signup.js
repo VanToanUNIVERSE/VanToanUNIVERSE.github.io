@@ -12,7 +12,8 @@ console.log(confirmPasswordErrorSpan, confirmPasswordInput);
 
 function validateUsername() 
 {
-    notExistErrorSpan.style.display = 'none';
+    if(notExistErrorSpan) {notExistErrorSpan.style.display = 'none';}
+        
     const username = usernameInput.value.trim();
     if(username == "")
     {
@@ -29,7 +30,7 @@ function validateUsername()
 }
 
 function validatePassword() {
-    notExistErrorSpan.style.display = 'none';
+    if(notExistErrorSpan) {notExistErrorSpan.style.display = 'none';}
     const password = passwordInput.value.trim();
     if(password == "")
     {

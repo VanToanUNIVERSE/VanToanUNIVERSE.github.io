@@ -2,6 +2,7 @@
     session_start();
     $username = $_SESSION["username"]  ?? '';
     $image = $_SESSION["image"] ?? 'defaultAvata.png';
+    $_SESSION["userID"] = $_SESSION["userID"] ?? '';
     require "includes/database.php";
     
     if(!$connection)
@@ -35,10 +36,10 @@
         <i class="fa-regular fa-square-caret-down more"></i>
         <a href="payment.php"><i class="fa-solid fa-cart-shopping cart"></i></a>
         <div class="more-content">
-            <a target="_blank" href="login.php">Đăng nhập</a>
-            <a target="_blank" href="payment.php">Giỏ hàng</a>
-            <a target="_blank" href="">Sản phẩm yêu thích</a>
-            <a target="_blank" href="">Nạp tiền</a>
+            <a href="<?php echo $_SESSION["userID"] ? "includes/logout.php" : "login.php" ?>"><?php echo $_SESSION["userID"] ? "Đăng xuất" : "Đăng nhập" ?></a>
+            <a href="payment.php">Giỏ hàng</a>
+            <a href="">Sản phẩm yêu thích</a>
+            <a href="">Nạp tiền</a>
             <button class="close-btn" onclick="showAndClose('more-content')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="user-info">

@@ -29,7 +29,7 @@
             echo $userData["username"].$userData["password"];
             if($userData["username"] == $username && $userData["password"] == $password)
             {
-                $_SESSION["userID"] = $userData["userID"] ?? '';
+                $_SESSION["userID"] = $userData["id"] ?? '';
                 $_SESSION["username"] = $userData["username"] ?? '';
                 $_SESSION["password"] = $userData["password"] ?? '';
                 $_SESSION["email"] = $userData["email"] ?? '';

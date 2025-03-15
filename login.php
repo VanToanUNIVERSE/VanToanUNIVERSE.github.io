@@ -27,11 +27,7 @@
             <button type="submit" name="submit" onclick="validateLogin(event);">Login</button>
             <span id="login-error" class="submit-error"></span>
             <?php
-                    if(!isset($_SESSION["error"]))
-                    {
-                        die("khong tao duoc loi");
-                    }
-                    else
+                    if(isset($_SESSION["error"]))
                     {
                         echo '<span id="not-exist-error" class="submit-error" style="display: block;">'.$_SESSION["error"].'</span>';
                     }
