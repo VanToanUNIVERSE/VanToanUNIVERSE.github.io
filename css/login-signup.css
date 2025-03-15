@@ -98,6 +98,17 @@ form button {
     transform: translateX(-50%);
 }
 
+.submit-error-success {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    color: rgb(0, 255, 0);
+    position: absolute;
+    left: 50%;
+    bottom: 3%;
+    transform: translateX(-50%);
+}
+
 .fa-check {
     color: green;
 }

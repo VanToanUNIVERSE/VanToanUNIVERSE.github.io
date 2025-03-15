@@ -7,12 +7,14 @@ const passwordErrorSpan = document.getElementById('password-error');
 const loginErrorSpan = document.getElementById('login-error');
 const sigupErrorSpan = document.getElementById('signup-error');
 const notExistErrorSpan = document.getElementById('not-exist-error');
+const doesExistErrorSpan = document.getElementById('does-exist-error');
 
 console.log(confirmPasswordErrorSpan, confirmPasswordInput);
 
 function validateUsername() 
 {
     if(notExistErrorSpan) {notExistErrorSpan.style.display = 'none';}
+    if(doesExistErrorSpan) {doesExistErrorSpan.style.display = 'none';}
         
     const username = usernameInput.value.trim();
     if(username == "")
@@ -31,6 +33,7 @@ function validateUsername()
 
 function validatePassword() {
     if(notExistErrorSpan) {notExistErrorSpan.style.display = 'none';}
+    if(doesExistErrorSpan) {doesExistErrorSpan.style.display = 'none';}
     const password = passwordInput.value.trim();
     if(password == "")
     {
@@ -77,15 +80,15 @@ function validateLogin(e) {
     return true;
 }
 
-function validateSignup() {
+function validateSignup(e) {
     
     if(!validateUsername() || !validatePassword() || !validateConfirmPassword()) 
         {
+            e.preventDefault();
             sigupErrorSpan.innerHTML = 'please fix error';
             setTimeout(() => {sigupErrorSpan.innerHTML = ''}, 2000)
             return false;
         }
-        alert("Sign up success");
         return true;
 }
 
@@ -114,7 +117,7 @@ function validateSignup() {
 
 
 
-function addAccount(e) 
+/* function addAccount(e) 
 {
     e.preventDefault();
     if(validateSignup()) 
@@ -130,11 +133,11 @@ function addAccount(e)
     }
     const bien = JSON.parse(localStorage.getItem('accounts'));
         console.log(bien);
-}
+} */
 
 //Test login
 
-class Account 
+/* class Account 
 {
     username;
     password;
@@ -144,4 +147,4 @@ class Account
     }
 }
 
-const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+const accounts = JSON.parse(localStorage.getItem('accounts')) || []; */

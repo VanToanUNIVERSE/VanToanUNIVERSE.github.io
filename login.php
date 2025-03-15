@@ -30,6 +30,7 @@
                     if(isset($_SESSION["error"]))
                     {
                         echo '<span id="not-exist-error" class="submit-error" style="display: block;">'.$_SESSION["error"].'</span>';
+                        unset($_SESSION["error"]);
                     }
                 ?>
             <a href="signup.php">Don't have account?</a>
