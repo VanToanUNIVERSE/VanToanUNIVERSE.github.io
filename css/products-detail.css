@@ -6,31 +6,27 @@
 
 .main {
     width: 100%;
-    height: 100vh;
-    background-color: #ccc;
+    min-height: 100vh;
     padding: 1px;
 }
 
 .hero {
-    background: url("images/product-background.png");
+    padding: 20px 0;
+    background-color: whitesmoke;
     background-repeat: none;
     background-size: cover;
-    width: 60%;
-    margin: 40px auto 0;
-    border-radius: 20px;
-    
+    width: 100%;
+    margin: 90px auto 0;
+    min-height: 80vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
 .left {
     font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.274);
-    border-radius: 20px 0 0 20px;
     padding: 20px 40px;
     display: flex;
     flex-direction: column;
-    gap: 0;
     position: relative;
     
 }
@@ -48,10 +44,16 @@
 
 .left .details {
     flex: 1;
-    
+    gap: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+}
+
+
+.left .details p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
 }
 
 .left .details .product-name {
@@ -89,7 +91,7 @@
 }
 
 .right {
-    background-color: rgba(0, 0, 0, 0.274);
+    
     border-radius: 0 20px 20px 0;
     padding: 20px 40px;
     display: flex;
@@ -109,23 +111,25 @@
     background: none;
     border: none;
     outline: none;
+    z-index: 1;
+    cursor: pointer;
 }
 
 .right .wrap .before {
     top: 50%;
-    left: -10%;
+    left: -5%;
     transform: translateY(-50%) rotate(180deg);
     opacity: 0.1;
 }
 
 .right .wrap .after {
     bottom: 50%;
-    right: -10%;
+    right: 5%;
     transform: translateY(50%);
 }
 
 .right .product-image-container {
-    flex: 1;
+    flex: 0.9;
     border-bottom: 2px solid #ccc;
     padding-bottom: 20px;
     position: relative;

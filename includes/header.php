@@ -56,9 +56,9 @@
             </div>
             <nav>
                 <ul class="menu">
-                    <li><a href="../index.php">Home</a></li>
+                    <li><a href="../index.php">Trang chủ</a></li>
                     <div class="drop-down">
-                        <li><a href="../product.php">Categories <i class="fa-solid fa-caret-down"></i></a></li>
+                        <li><a href="../product.php">Danh mục <i class="fa-solid fa-caret-down"></i></a></li>
                         <div class="drop-down-content">
                             <ul>
                                     <?php
@@ -73,8 +73,8 @@
                         </div>
                     </div>
                     
-                    <li><a href="../payment.php">Cart</a></li>
-                    <li><a href="../about.php">About</a></li>
+                    <li><a href="../payment.php">Giỏ hàng</a></li>
+                    <li><a href="../about.php">Vê chúng tôi</a></li>
                 </ul>
             </nav>
             <div class="social">

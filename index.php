@@ -16,7 +16,7 @@
         GROUP BY products.id";
     $statement = $connection->prepare($sql);
     $statement->execute();
-    $hotProductList = $statement->fetchAll(); 
+    $hotProductList = $statement->fetchAll(); //dulieu cua danh sach san pham hot
 ?>
 
 <!DOCTYPE html>
@@ -56,9 +56,9 @@
             </div>
             <nav>
                 <ul class="menu">
-                    <li><a href="">Home</a></li>
+                    <li><a href="">Trang chủ</a></li>
                     <div class="drop-down">
-                        <li><a href="product.php">Categories <i class="fa-solid fa-caret-down"></i></a></li>
+                        <li><a href="product.php">Danh mục <i class="fa-solid fa-caret-down"></i></a></li>
                         <div class="drop-down-content">
                             <ul>
                                     <?php
@@ -73,8 +73,8 @@
                         </div>
                     </div>
                     
-                    <li><a href="payment.php">Cart</a></li>
-                    <li><a href="about.php">About</a></li>
+                    <li><a href="payment.php">Giỏ hàng</a></li>
+                    <li><a href="about.php">Về chúng tôi</a></li>
                 </ul>
             </nav>
             <div class="social">
@@ -108,11 +108,13 @@
                 foreach($hotProductList as $product)
                 {
                     echo '
+                    <a href="product-detail.php?productID='.$product["id"].'">
                         <div class="card">
                             <img src="images/products/'.$product["image"].'" alt="'.$product["name"].'" width="200px" height="200px">
                             <p class="no-wrap">'.$product["name"].'</p>
                             <p>'.number_format($product["price"], 0, ',', '.').' VNĐ</p>
                         </div>
+                    </a>
                     ';
                 }
             ?>

@@ -1,3 +1,19 @@
+<?php
+    require "includes/header.php";
+    $sql = "
+    select products.*, GROUP_CONCAT(product_images.image order by products.id separator ',') as images
+    from products
+    left join product_images on products.id = product_images.product_id
+    group by id
+    ";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+    $productsData = $statement->fetchAll();
+
+                        
+    
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +33,34 @@
                 <h2 class="logo">Amazing shop</h2>
     
                 <div class="details">
-                    <h3 class="product-name">Product name is here</h3>
+                    
+                    <?php
+                    foreach($productsData as $product)
+                    {
+                        
+                        if($product["id"] == $_GET["productID"])
+                        {
+                            $sizes = explode(",", $product["size"]);
+                            echo 
+                            '<h3 class="product-name">'.$product["name"].'</h3>
+                            <p>Describe: '.$product["describe"].'</p>
+                            <h3 class="product-cost">'.number_format($product["price"], 2, ',', '.').' VNĐ</h3>
+                            <div class="size-chose">
+                                <label for="size">Chọn kích thước: </label>
+                                <select name="size">';
+                                foreach($sizes as $size)
+                                {
+                                    echo '<option value="'.$size.'">'.$size.'</option>';
+                                }   
+                                    
+                                echo '</select>
+                            </div>';
+                        }
+                        
+                    }
+                       
+                    ?>
+                    <!-- <h3 class="product-name">Product name is here</h3>
                     <p>Describe: there are a T-shirt you can wear anywhere all the time</p>
                     <h3 class="product-cost">99.99 $</h3>
                     <div class="size-chose">
@@ -28,7 +71,7 @@
                             <option value="L">L</option>
                             <option value="XL">XL</option>
                         </select>
-                    </div>
+                    </div> -->
                     
                     <button type="button">Thêm vào giỏ hàng</button>
                 </div>
@@ -37,36 +80,51 @@
             <div class="right">
                 <div class="wrap">
                     <button class="btn before"><i class="fa-solid fa-forward-step"></i></button>
-                    <div class="product-image-container">                       
-                        <img src="images/AK1-1.png" alt="product image" width="100px" height="100px">
-                        <img src="images/AK1-1.png" alt="product image" width="100px" height="100px">
-                        <img src="images/AK1-1.png" alt="product image" width="100px" height="100px">
-                        <img src="images/AK1-1.png" alt="product image" width="100px" height="100px">
+                    <div class="product-image-container">  
+                        <?php
+                            foreach($productsData as $product)
+                            {
+                                if($product["id"] == $_GET["productID"])
+                                {
+                                    $images = explode(",", $product["images"]);
+                                    $images = array_reverse($images);
+                                    foreach($images as $image)
+                                    {
+                                        echo '<img src="images/products/'.$image.'" alt="'.$product["name"].'" width="100px" height="100px">';
+                                    }
+                                }
+                            }
+                        ?>                   
+                        
                     </div>
                     <button class="btn after"><i class="fa-solid fa-forward-step"></i></button>
                 </div>
                 
 
-                <div class="other-products">
+                <!-- <div class="other-products">
                     <div class="card">
-                        <img src="images/AK1.png" alt="product image" width="100px" height="100px">
+                        <img src="images/products/AKD01.png" alt="product image" width="100px" height="100px">
                         <p>product cost</p>
                     </div>
                     <div class="card">
-                        <img src="images/AK2.png" alt="product image" width="100px" height="100px">
+                        <img src="images/products/AKD01.png" alt="product image" width="100px" height="100px">
                         <p>product cost</p>
                     </div>
                     <div class="card">
-                        <img src="images/AK3.png" alt="product image" width="100px" height="100px">
+                        <img src="images/products/AKD01.png" alt="product image" width="100px" height="100px">
                         <p>product cost</p>
                     </div>
-                </div>
+                </div> -->
     
             </div>
     
         </div>
         
         <script src="js/product-detail.js"></script>
+        <?php
+            require "includes/footer.php";
+        
+        ?>
     </main>
 </body>
 </html>
