@@ -120,11 +120,12 @@
     
         </div>
         
-        <script src="js/product-detail.js"></script>
+        
         <?php
             require "includes/footer.php";
         
         ?>
     </main>
+    <script src="js/product-detail.js"></script>
 </body>
 </html>

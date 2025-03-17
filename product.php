@@ -1,3 +1,58 @@
+<?php
+    require "includes/header.php";
+    $sql = "select * from subcategories";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+    $subcategoriesData = $statement->fetchAll();
+
+
+    $sql = "select count(*) from products";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+    $productQuantity = $statement->fetchColumn();
+    $page = isset($_GET["page"]) ? (int)$_GET['page'] : 1;
+    if($page < 1) $page = 1;
+    $offset = (int)(($page - 1) * 8);
+    $totalPages = ceil($productQuantity/8);
+
+
+    
+
+    $sql = "SELECT products.*, product_images.image 
+    FROM products 
+    LEFT JOIN product_images ON products.id = product_images.product_id AND product_images.is_main = 1
+    GROUP BY products.id
+    LIMIT 8 OFFSET :offset";  
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':offset', $offset, PDO::PARAM_INT);
+    $statement->execute();
+    $productList = $statement->fetchAll();
+
+    if(isset($_GET["subcategoryID"]))
+    {
+        $sql = "SELECT products.*, product_images.image
+        FROM products 
+        LEFT JOIN product_images ON products.id = product_images.product_id AND product_images.is_main = 1 
+        WHERE products.subcategory_id = ?
+        GROUP BY products.id"; 
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $_GET["subcategoryID"]);
+        $statement->execute();
+        $productList = $statement->fetchAll();
+
+        $sql = "select count(*) from products where products.subcategory_id = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $_GET["subcategoryID"]);
+        $statement->execute();
+        $productQuantity = $statement->fetchColumn();
+        $page = isset($_GET["page"]) ? (int)$_GET['page'] : 1;
+        if($page < 1) $page = 1;
+        $offset = (int)(($page - 1) * 8);
+        $totalPages = ceil($productQuantity/8);
+    }
+    
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,65 +68,60 @@
 <body>
     <main>
         <div class="categories">
-            <div class="dropdown AK-category">
-                <button class="dropdown-btn">Áo khoác <i class="fa-solid fa-caret-down"></i></button>
-                <div class="dropdown-content">
-                    <ul>
-                        <li><p>Áo khoác Nỉ</p></li>
-                        <li><p>Áo khoác dù</p></li>
-                        <li><p>Áo khoác Kaki</p></li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="dropdown AK-category">
-                <button class="dropdown-btn">Áo khoác <i class="fa-solid fa-caret-down"></i></button>
-                <div class="dropdown-content">
-                    <ul>
-                        <li><p>Áo khoác Nỉ</p></li>
-                        <li><p>Áo khoác dù</p></li>
-                        <li><p>Áo khoác Kaki</p></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="dropdown AK-category">
-                <button class="dropdown-btn">Áo khoác <i class="fa-solid fa-caret-down"></i></button>
-                <div class="dropdown-content">
-                    <ul>
-                        <li><p>Áo khoác Nỉ</p></li>
-                        <li><p>Áo khoác dù</p></li>
-                        <li><p>Áo khoác Kaki</p></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="dropdown AK-category">
-                <button class="dropdown-btn">Áo khoác <i class="fa-solid fa-caret-down"></i></button>
-                <div class="dropdown-content">
-                    <ul>
-                        <li><p>Áo khoác Nỉ</p></li>
-                        <li><p>Áo khoác dù</p></li>
-                        <li><p>Áo khoác Kaki</p></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="dropdown AK-category">
-                <button class="dropdown-btn">Áo khoác <i class="fa-solid fa-caret-down"></i></button>
-                <div class="dropdown-content">
-                    <ul>
-                        <li><p>Áo khoác Nỉ</p></li>
-                        <li><p>Áo khoác dù</p></li>
-                        <li><p>Áo khoác Kaki</p></li>
-                    </ul>
-                </div>
-            </div>
+            <?php
+                foreach($categoriesData as $category) 
+                {
+                    echo '
+                        <div class="dropdown AK-category">
+                            <button class="dropdown-btn">'.$category["name"].' <i class="fa-solid fa-caret-down"></i></button>
+                            <div class="dropdown-content">
+                                <ul>';                      
+                                foreach($subcategoriesData as $subcategory)
+                                {
+                                    if($category["id"] == $subcategory["categoriy_id"])
+                                    echo '<li><a href="product.php?subcategoryID='.$subcategory["id"].'">'.$subcategory["name"].'</a></li>';
+                                }
+                                echo '</ul>
+                            </div>
+                        </div>
+                    ';
+                }
+            ?>
+           
         </div>
 
         <div class="products-container">
-            <div class="category-name">Áo khoác</div>
-            <div class="card">
+            <div class="category-name"><?php 
+            if(isset($_GET["subcategoryID"]))
+            {
+                foreach($subcategoriesData as $sub)
+                {
+                    if($sub["id"] == $_GET["subcategoryID"])
+                    {
+                        echo '<h3>'.$sub["name"].'</h3>';
+                    }
+                }
+            }
+            
+            ?></div>
+            <?php
+            if(empty($productList))
+            {
+                echo "<h3>Chưa có sản phẩm nào</h3>";
+            }
+            foreach($productList as $product)
+            {
+                echo ' 
+                <a href="product-detail.php?productID='.$product["id"].'"><div class="card">
+                <img src="images/products/'.$product["image"].'" alt="'.$product["name"].'" width="100px" height="100px">
+                <p>'.$product["name"].'</p>
+                <h3>'.number_format($product["price"], 0, ',', '.').' VNĐ</h3>
+                </div></a>';
+            }
+                
+            ?>
+            <!-- <div class="card">
                 <img src="images/AK1-1.png" alt="" width="100px" height="100px">
                 <p>Áo khoác dù phối xéo</p>
                 <h3>32 $</h3>
@@ -132,13 +182,22 @@
                 <img src="images/AK1-1.png" alt="" width="100px" height="100px">
                 <p>Áo khoác dù phối xéo</p>
                 <h3>32 $</h3>
-            </div>
-        </div>
+            </div>-->
+        </div> 
 
         <nav class="turn-page">
-            <a href="#">1</a>
-            <a href="">2</a>
+            <?php
+                for($i = 1; $i <= $totalPages ; $i++)
+                {
+                    echo '
+                        <a href="product.php?page='.$i.'">'.$i.'</a>
+                    ';
+                }
+            ?>
         </nav>
+        <?php
+        require "includes/footer.php";
+    ?>
     </main>
 </body>
 </html>

@@ -9,6 +9,7 @@
 
     if(isset($_POST["submit"]))
     {
+        $id = $_SESSION["userID"]; // gan id
         $fullName  = !empty($_POST["fullName"]) ? $_POST["fullName"] : $_SESSION["fullName"];
         $email = !empty($_POST["email"]) ? $_POST["email"] : $_SESSION["email"];
         $phone = !empty($_POST["phone"]) ? $_POST["phone"] : $_SESSION["phone"];

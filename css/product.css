@@ -5,7 +5,7 @@
 }
 
 main {
-    background-color: #ccc;
+    
     font-family: "Poppins", cursive;
     width: 100%;
     height: 100vh;
@@ -13,8 +13,8 @@ main {
 }
 
 .categories {
-    margin: 50px 0;
-    background-color: white;
+    margin: 100px 0;
+    background-color: whitesmoke;
     display: flex;
     justify-content: center;
     gap: 5%;
@@ -64,8 +64,16 @@ main {
 .dropdown-content ul li {
     flex: 1;
     border-bottom: 1px solid #ccc;
-    padding: 10px;
+    
     cursor: pointer;
+}
+
+.dropdown-content ul li a {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-decoration: none;
+    color: inherit;
 }
 
 .dropdown-content ul li:hover {
