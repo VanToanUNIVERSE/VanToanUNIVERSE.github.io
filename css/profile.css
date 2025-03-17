@@ -10,7 +10,7 @@ main {
     font-size: 1.2fr;
     font-family: "Poppins", cursive;
     background-color: #ccc;
-    padding: 1px;
+    padding-top: 60px;
 }
 
 .profile-container {
@@ -66,12 +66,12 @@ main {
 
 .orders-history {
     display: grid;
-    width: 50%;
+    width: 100%;
     margin: 100px auto;
     padding: 20px;
     background-color: white;
     box-shadow: 0 0 5px #333;
-    border-radius: 20px;
+    
     gap: 30px;
 }
 
@@ -154,4 +154,85 @@ main {
 .order-details .close-btn:hover i{
     color: purple;
     transform: scale(1.1);
+}
+
+
+/* form */
+form {
+    width: 60%;
+    min-height: 50vh;
+    background-color: #ccc;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    box-shadow: 0px 0px 5px #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 20px;
+    border-radius: 30px;
+    padding-bottom: 100px;
+    display: none;
+}
+
+.edit-info-container {
+    flex: 1;
+    display: flex;
+    flex-direction: center;
+}
+.edit-info-container label{
+    flex: 10%;
+    text-align: left;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    padding-right: 20px;
+}
+.edit-info-container input{
+    flex: 90%;
+    background: none;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #333;
+    font-size: 20px;
+}
+
+#update-btn {
+    width: 150px;
+    padding: 10px 25px;
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+#close-btn {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    background: none;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#close-btn:hover {
+    background-color: purple;
+    color: white;
+}
+
+#submit-error {
+    color: red;
+    position: absolute;
+    bottom: 40%;
+    left: 50%;
+    transform: translateX(-50%);
 }

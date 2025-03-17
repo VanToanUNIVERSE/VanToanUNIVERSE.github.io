@@ -1,6 +1,47 @@
 <?php
-    session_start();
-    require "includes/database.php";
+    require "includes/header.php";
+    if(!isset($_SESSION["userID"])) //chuyen huong sang trang dang nhap neu chua dn
+    {
+        header("Location: login.php");
+        exit();
+    }
+    
+
+    if(isset($_POST["submit"]))
+    {
+        $fullName  = !empty($_POST["fullName"]) ? $_POST["fullName"] : $_SESSION["fullName"];
+        $email = !empty($_POST["email"]) ? $_POST["email"] : $_SESSION["email"];
+        $phone = !empty($_POST["phone"]) ? $_POST["phone"] : $_SESSION["phone"];
+        $address = !empty($_POST["address"]) ? $_POST["address"] : $_SESSION["address"];
+        if(empty($fullName) && empty($email) && empty($phone) && empty($address))
+        {
+            $_SESSION["lastPage"] = "profile.php";
+            header("Location: includes/message.php?error=1");
+            exit();
+        }
+        else
+        {
+            $sql = "update users 
+            set fullName = ?, email = ?, phone = ?, address = ?
+            where id = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $fullName);
+            $statement->bindParam(2, $email);
+            $statement->bindParam(3, $phone);
+            $statement->bindParam(4, $address);
+            $statement->bindParam(5, $id);
+            $statement->execute();
+            $_SESSION["fullName"] = $fullName;
+            $_SESSION["email"] = $email;
+            $_SESSION["phone"] = $phone;
+            $_SESSION["address"] = $address;
+            $_SESSION["lastPage"] = "profile.php";
+            header("Location: includes/message.php?success=1");
+            exit();
+            }
+            header("Location: ./profile.php");
+            exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +60,7 @@
     <main>
         <div class="profile-container">
             <div class="image-container">
-                <img src="images/avata.png" alt="avata" width="100px" height="100px">
+                <img src="images/avata/<?php echo $_SESSION["image"]; ?>" alt="" width="100px" height="100px">
             </div>
             <div class="info-container">
                 <?php
@@ -29,9 +70,12 @@
                         <p>Email: '.$_SESSION["email"].'</p>
                         <address>'.$_SESSION["address"].'</address>
                         <p>Số tiền trong ví: '.$_SESSION["wallet"].' $</p>
-                        <button class="edit-profile-btn">Chỉnh sửa hồ sơ</button>
+                        
                     ';
                 ?>
+                <button class="edit-profile-btn" onclick="
+                    document.getElementById('submit-form').style.display = 'flex';
+                ">Chỉnh sửa hồ sơ</button>
                 <!-- <h3 class="user-name">User full name</h3>
                 <p>SDT: 0932 324 534</p>
                 <p>Email: jessica@gmail.com</p>
@@ -100,7 +144,39 @@
             </button>
             
         </div>
+
+        <div class="edit-form-container">
+            <form action="" method="post" id="submit-form">
+                <h2>Chỉnh sửa thông tin</h2>
+                <div class="edit-info-container">
+                    <label for="full-name">Họ tên: </label>
+                    <input type="text" name="fullName" id="full-name">
+                </div>
+                <div class="edit-info-container">
+                    <label for="email">Email: </label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <div class="edit-info-container">
+                    <label for="phone">SDT: </label>
+                    <input type="text" name="phone" id="phone">
+                </div>
+                <div class="edit-info-container">
+                    <label for="address">Address: </label>
+                    <input type="text" name="address" id="address">
+                </div>
+                <!-- <div class="edit-info-container">
+                    <label for="full-name">Họ tên</label>
+                    <input type="text" name="fullName" id="full-name">
+                </div> -->
+                
+                <button name="submit" id="update-btn" type="submit">Cập nhật</button>
+                <span id="submit-error"></span>
+                <button id="close-btn" onclick="Close(event)">X</button>
+            </form>
+        </div>
         
     </main>
+    <script src="js/profile.js"></script>
+    <?php require "includes/footer.php" ?>
 </body>
 </html>
