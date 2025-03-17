@@ -462,6 +462,7 @@ background: rgba(255, 255, 255, 0.1);
 /* css for footer */
 
 footer {
+    margin-top: 100px;
     background-color: #ff85a2;
     transition: all 0.3s;
 }
@@ -519,3 +520,6 @@ footer {
     padding: 20px;
 }
 
+.no-wrap {
+    white-space: nowrap;
+}

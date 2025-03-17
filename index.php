@@ -1,21 +1,22 @@
 <?php
     session_start();
+    require "includes/database.php";
     $username = $_SESSION["username"]  ?? '';
     $image = $_SESSION["image"] ?? 'defaultAvata.png';
     $userID = $_SESSION["userID"] ?? '';
-    require "includes/database.php";
-    
-    if(!$connection)
-    {
-        die("Loi ket noi voi databasse");
-    }
-    else
-    {
-        $sql = "select * from categories where active = 1";
-        $statement = $connection->prepare($sql);
-        $statement->execute();
-        $categoriesData = $statement->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $sql = "select * from categories where active = 1";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+    $categoriesData = $statement->fetchAll(PDO::FETCH_ASSOC); //du lieu cua danh muc
+
+    $sql = "SELECT products.*, product_images.image 
+        FROM products 
+        LEFT JOIN product_images ON products.id = product_images.product_id
+        where hot = 1
+        GROUP BY products.id";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+    $hotProductList = $statement->fetchAll(); 
 ?>
 
 <!DOCTYPE html>
@@ -103,46 +104,19 @@
         </div>
 
         <div id="products" class="products-container">
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
-            <div class="card">
-                <img src="images/AK1.png" alt="áo thun" width="200px" height="200px">
-                <p>product name</p>
-                <p>product cost</p>
-            </div>
+            <?php
+                foreach($hotProductList as $product)
+                {
+                    echo '
+                        <div class="card">
+                            <img src="images/products/'.$product["image"].'" alt="'.$product["name"].'" width="200px" height="200px">
+                            <p class="no-wrap">'.$product["name"].'</p>
+                            <p>'.number_format($product["price"], 0, ',', '.').' VNĐ</p>
+                        </div>
+                    ';
+                }
+            ?>
+            
            
             <a href="product.php" class="more-products">Xem thêm <i class="fa-solid fa-arrow-right"></i></a>
         </div>
