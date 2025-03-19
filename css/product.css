@@ -39,6 +39,11 @@ main {
     cursor: pointer;
 }
 
+.dropdown .dropdown-btn a {
+    text-decoration: none;
+    color: inherit;
+}
+
 .dropdown:hover .dropdown-content {
     display: block;
 }

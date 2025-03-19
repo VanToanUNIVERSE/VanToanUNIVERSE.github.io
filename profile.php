@@ -70,7 +70,7 @@
                         <p>SDT: '.$_SESSION["phone"].'</p>
                         <p>Email: '.$_SESSION["email"].'</p>
                         <address>'.$_SESSION["address"].'</address>
-                        <p>Số tiền trong ví: '.$_SESSION["wallet"].' $</p>
+                        <p>Số tiền trong ví: '.number_format($_SESSION["wallet"], 0, ',', '.').' VNĐ</p>
                         
                     ';
                 ?>

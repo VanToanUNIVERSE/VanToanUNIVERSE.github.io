@@ -58,7 +58,7 @@
                 <ul class="menu">
                     <li><a href="">Trang chủ</a></li>
                     <div class="drop-down">
-                        <li><a href="product.php">Danh mục <i class="fa-solid fa-caret-down"></i></a></li>
+                        <li><a href="product.php?page=1">Danh mục <i class="fa-solid fa-caret-down"></i></a></li>
                         <div class="drop-down-content">
                             <ul>
                                     <?php
@@ -94,7 +94,15 @@
                 <h3>A place where you can buy any clothes you want</h3>
                 <div class="negavi">
                     <a href="#products">Shopping now</a>
-                    <a id="login" href="login.php">Login</a>
+                    <?php 
+                    if(!isset(($_SESSION["userID"])))
+                    {
+                        echo '<a id="login" href="login.php">Login</a>';    
+                    }
+                   
+                                    
+                    ?>
+                    
                 </div>
                 
             </div>

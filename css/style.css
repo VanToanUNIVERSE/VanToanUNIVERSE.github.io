@@ -48,7 +48,7 @@ header {
     font-family: "Playwrite IT Moderna", cursive;
     font-weight: bolder;
     font-size: 1.4rem;
-    color: #007bff; 
+    color: #ff4081; 
 }
 
 .social {
@@ -90,7 +90,7 @@ nav {
     transition: all 0.3s;
 }
 .menu  a:hover {
-    color: #fe4a8f;
+    color: #ff4081;
     transform: translateY(-10%);
 }
 
@@ -295,6 +295,7 @@ main {
     width: 100%;
     transform: translate(0);
     transition: all 0.3s;
+    background-color: #fff8f8;
 }
 .introduce {
     width: 90%;
@@ -309,7 +310,7 @@ main {
 .introduce::before {
     position: absolute;
     content: '';
-    background: linear-gradient(to right, #e232bf, blue);
+    background: linear-gradient(to right, pink, #f8e1f4);
     width: 180px;
     height: 180px;
     border-radius: 20px;
@@ -321,7 +322,7 @@ main {
 .introduce::after {
     position: absolute;
     content: '';
-    background: radial-gradient(#e232bf, blue);
+    background: radial-gradient(#f8e1f4, pink);
     width: 180px;
     height: 180px;
     border-radius: 50%;
@@ -343,11 +344,9 @@ background: rgba(255, 255, 255, 0.1);
 }
 
 .introduce .left h3 {
-    background: linear-gradient(to right, #ff4d79, #ff85a2, #ff4d79);
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: #333;
     
-    -webkit-text-fill-color: transparent;
+
     font-size: 3.5rem;
     font-weight: bold;
     font-family: cursive;
@@ -368,7 +367,7 @@ background: rgba(255, 255, 255, 0.1);
     font-weight: bold;
     padding: 10px 30px;
     border-radius: 50px;
-    background: rgb(253, 150, 167);
+    background: #ff4081;
     transition: all 0.5s;
 }
 
@@ -517,7 +516,7 @@ footer {
 }
 
 .footer-column ul li a:hover {
-    color:rgb(249, 107, 131);
+    color:#ff4081;
 }
 
 .footer-bottom {

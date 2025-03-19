@@ -15,9 +15,6 @@
     $offset = (int)(($page - 1) * 8);
     $totalPages = ceil($productQuantity/8);
 
-
-    
-
     $sql = "SELECT products.*, product_images.image 
     FROM products 
     LEFT JOIN product_images ON products.id = product_images.product_id AND product_images.is_main = 1
@@ -28,19 +25,11 @@
     $statement->execute();
     $productList = $statement->fetchAll();
 
-    if(isset($_GET["subcategoryID"]))
-    {
-        $sql = "SELECT products.*, product_images.image
-        FROM products 
-        LEFT JOIN product_images ON products.id = product_images.product_id AND product_images.is_main = 1 
-        WHERE products.subcategory_id = ?
-        GROUP BY products.id"; 
-        $statement = $connection->prepare($sql);
-        $statement->bindParam(1, $_GET["subcategoryID"]);
-        $statement->execute();
-        $productList = $statement->fetchAll();
+    
 
-        $sql = "select count(*) from products where products.subcategory_id = ?";
+    if(isset($_GET["subcategoryID"])) // loc danh sach dua tren subcategoryID
+    {
+        $sql = "select count(*) from products where products.subcategory_id = ?"; // tạo lại trang 
         $statement = $connection->prepare($sql);
         $statement->bindParam(1, $_GET["subcategoryID"]);
         $statement->execute();
@@ -49,8 +38,51 @@
         if($page < 1) $page = 1;
         $offset = (int)(($page - 1) * 8);
         $totalPages = ceil($productQuantity/8);
+        
+        $sql = "SELECT products.*, product_images.image
+        FROM products 
+        LEFT JOIN product_images ON products.id = product_images.product_id AND product_images.is_main = 1 
+        WHERE products.subcategory_id = :id
+        GROUP BY products.id
+         LIMIT 8 OFFSET :offset"; 
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(':id', $_GET["subcategoryID"]);
+        $statement->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+        $productList = $statement->fetchAll();
+
+        
     }
-    
+
+    if(isset($_GET["categoryID"]))
+    {
+        $sql = "select count(*) from products where products.category_id = ?"; // tạo lại trang 
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $_GET["categoryID"]);
+        $statement->execute();
+        $productQuantity = $statement->fetchColumn();
+        $page = isset($_GET["page"]) ? (int)$_GET['page'] : 1;
+        if($page < 1) $page = 1;
+        $offset = (int)(($page - 1) * 8);
+        $totalPages = ceil($productQuantity/8);
+
+        
+
+
+        $sql = "SELECT products.*, product_images.image
+        FROM products 
+        LEFT JOIN product_images ON products.id = product_images.product_id AND product_images.is_main = 1 
+        WHERE products.category_id = :id
+        GROUP BY products.id
+        LIMIT 8 OFFSET :offset";
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(':id', $_GET["categoryID"]);
+        $statement->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+        $productList = $statement->fetchAll();
+
+        
+    }
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +106,7 @@
                 {
                     echo '
                         <div class="dropdown AK-category">
-                            <button class="dropdown-btn">'.$category["name"].' <i class="fa-solid fa-caret-down"></i></button>
+                            <button class="dropdown-btn"><a href=product.php?categoryID='.$category["id"].'>'.$category["name"].'</a> <i class="fa-solid fa-caret-down"></i></button>
                             <div class="dropdown-content">
                                 <ul>';                      
                                 foreach($subcategoriesData as $subcategory)
@@ -189,9 +221,18 @@
             <?php
                 for($i = 1; $i <= $totalPages ; $i++)
                 {
+                   if(isset($_GET["categoryID"]))
+                   {
                     echo '
-                        <a href="product.php?page='.$i.'">'.$i.'</a>
-                    ';
+                    <a href="product.php?page='.$i.'&categoryID='.$_GET["categoryID"].'">'.$i.'</a>
+                ';
+                   }
+                   else{
+                    echo '
+                    <a href="product.php?page='.$i.'">'.$i.'</a>
+                ';
+                   }
+                    
                 }
             ?>
         </nav>
