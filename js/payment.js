@@ -408,3 +408,20 @@ function deleteCard(cartKey)
     }
     xhr.send("cartKey=" + cartKey);
 }
+
+function deleteCardUI(cartKey)
+{
+    const card = document.getElementById(cartKey);
+    const productPrice = document.getElementById(cartKey + "-price").getAttribute("data-price");
+    const productQuantity = document.getElementById(cartKey + "-quantity").getAttribute("data-quantity");
+    const cardPrice = productQuantity * productPrice;
+    const totalPrice = document.getElementById("total-price-value").innerText;
+    let totalPriceValue = parseInt(totalPrice.replace(/\./g, ""), 10);;
+    console.log(totalPriceValue);
+    totalPriceValue -= parseFloat(cardPrice);
+    document.getElementById("total-price-value").innerHTML = totalPriceValue.toLocaleString("vi-VN");
+    if(totalPriceValue == 0)
+    {
+        document.querySelector(".product-list").innerHTML = "<h3>Chưa có sản phẩm nào</h3>";
+    }
+}

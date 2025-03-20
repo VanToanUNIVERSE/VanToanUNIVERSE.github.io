@@ -20,7 +20,7 @@
     $orderPrice = 0;
     foreach($_SESSION["cart"] as $cartKey => $product)
     {
-        $orderPrice += $product["productPrice"];
+        $orderPrice += $product["productPrice"] * $product["productQuantity"];
     }
 
     //xoa sp
@@ -65,13 +65,13 @@
                     <div class="card" id="'.$cartKey.'">
                     <a href="product-detail.php?productID='.$product["productID"].'"><div >
                     <img src="images/products/'.$product["productImage"].'" alt="" width="100px" height="100px">
-                    <p>Số lượng : '.$product["productQuantity"].'</p>
-                    <p>Giá: '.number_format($product["productPrice"], 0, ',', '.').'</p>
+                    <p id="'.$cartKey.'-quantity" data-quantity="'.$product["productQuantity"].'">Số lượng : '.$product["productQuantity"].'</p>
+                    <p id="'.$cartKey.'-price" data-price="'.$product["productPrice"].'">Giá: '.number_format($product["productPrice"], 0, ',', '.').'</p>
                     <p>Size: '.$product["productSize"].'</p>
                     </div>
                     
                     </a>
-                    <button class="delete-btn" style="z-index: 1" type="button" onclick=\'deleteCard("'.$cartKey.'")\'><i class="fa-solid fa-trash"></i></button>
+                    <button class="delete-btn" style="z-index: 1" type="button" onclick=\'deleteCard("'.$cartKey.'");deleteCardUI("'.$cartKey.'")\'><i class="fa-solid fa-trash"></i></button>
                     </div>';
                     
                 }
@@ -128,7 +128,7 @@
             
                 <p class="user-wallet">Tiền trong ví :<?php echo number_format($userWallet, 0, ',', '.') ?> VNĐ <a href="">Nạp tiền</a></p>
                 
-            <?php echo '<p class="total-price">Tổng :'.number_format($orderPrice, 0, ',', '.').' VNĐ</p>'; ?>
+            <?php echo '<p class="total-price">Tổng :<span id="total-price-value">'.number_format($orderPrice, 0, ',', '.').'<span> VNĐ</p>'; ?>
             <!-- <p class="total-price">Tổng : 99999$</p> -->
             <p>Phương thức thanh toán: </p>
             <form>

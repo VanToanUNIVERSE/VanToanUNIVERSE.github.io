@@ -80,6 +80,9 @@ main {
 
 .product-list .card .delete-btn {
     position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(-30%, 30%);
 }
 
 .product-list .card img {
