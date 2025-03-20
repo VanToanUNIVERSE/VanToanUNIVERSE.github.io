@@ -10,8 +10,39 @@
     $statement->execute();
     $productsData = $statement->fetchAll();
 
-                        
-    
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        $productID = $_POST["productID"];
+        $productName = $_POST["productName"];
+        $productQuantity = $_POST["productQuantity"];
+        $productPrice = $_POST["productPrice"];
+        $productSize = $_POST["productSize"];
+        $productImage = $_POST["productImage"];
+        
+        $cartKey = $productID . "_" . $productSize;
+        
+        if(!isset($_SESSION["cart"]))
+        {
+            $_SESSION["cart"] = [];
+        }
+        if(isset($_SESSION["cart"][$cartKey]))
+        {
+            $_SESSION["cart"][$cartKey]["productQuantity"] += 1;
+        }
+        else
+        {
+            $_SESSION["cart"][$cartKey] = 
+            [
+                "productID" => $productID,
+                "productName" => $productName,
+                "productQuantity" => $productQuantity,
+                "productPrice" => $productPrice,
+                "productSize" => $productSize,
+                "productImage" => $productImage
+
+            ];
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +64,10 @@
                 <h2 class="logo">Amazing shop</h2>
     
                 <div class="details">
+                    <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post">
+
+
+                    
                     
                     <?php
                     foreach($productsData as $product)
@@ -47,7 +82,7 @@
                             <h3 class="product-cost">'.number_format($product["price"], 2, ',', '.').' VNĐ</h3>
                             <div class="size-chose">
                                 <label for="size">Chọn kích thước: </label>
-                                <select name="size">';
+                                <select id="size" name="size">';
                                 foreach($sizes as $size)
                                 {
                                     echo '<option value="'.$size.'">'.$size.'</option>';
@@ -60,20 +95,25 @@
                     }
                        
                     ?>
-                    <!-- <h3 class="product-name">Product name is here</h3>
-                    <p>Describe: there are a T-shirt you can wear anywhere all the time</p>
-                    <h3 class="product-cost">99.99 $</h3>
-                    <div class="size-chose">
-                        <label for="size">Chọn kích thước: </label>
-                        <select name="size">
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                        </select>
-                    </div> -->
                     
-                    <button type="button">Thêm vào giỏ hàng</button>
+                    <!-- <button type="button" name="submit" onclick="addToCart('ADK01','Ao thun', 2, 200000, 'M');">Thêm vào giỏ hàng</button> -->
+
+                    <?php
+                        foreach($productsData as $product)
+                        {
+                            
+                            if($product["id"] == $_GET["productID"])
+                            {
+                                $images = explode(",", $product["images"]);
+                                $images = array_reverse($images);
+                                $productNamez = json_encode($product["name"]);
+
+                                echo '<button type="button" name="submit" onclick=\'addToCart('.json_encode($product["id"]).','.$productNamez.', 1, '.$product["price"].', "'.$images[0].'");\'>Thêm vào giỏ hàng</button>';
+                            }
+                        }
+                    ?>
+                    <span id="submit-message"><i class="fa-solid fa-circle-check"></i></span>
+                    </form>
                 </div>
     
             </div>

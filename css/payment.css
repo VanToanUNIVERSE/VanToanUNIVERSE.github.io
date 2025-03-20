@@ -9,8 +9,9 @@
 main {
     width: 100%;
     min-height: 120vh;
-    background-color: #ccc;
-    padding-top: 10px;
+    background-color: #bbb;
+    padding: 100px 0;
+    transform: none;
 }
 
 .product-list-container {
@@ -55,6 +56,8 @@ main {
     scroll-behavior: smooth;
 }
 
+
+
 .product-list::-webkit-scrollbar {
     display: none;
 }
@@ -67,6 +70,16 @@ main {
     border-radius: 10px;
     transition: all 0.3s;
     cursor: pointer;
+   
+}
+
+.product-list .card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-list .card .delete-btn {
+    position: absolute;
 }
 
 .product-list .card img {
@@ -189,10 +202,11 @@ main {
     font-size: 20px;
 }
 
-.close-btn {
+.validate-payment .closes-btn {
     position: absolute;
     top: 0;
     left:3%;
+    
 }
 
 .display-none {

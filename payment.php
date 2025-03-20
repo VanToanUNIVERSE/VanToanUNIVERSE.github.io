@@ -1,3 +1,41 @@
+<?php
+    require "includes/header.php";
+    require "includes/productsData.php";
+
+    //lay va hien thi vi tien cua khach hang
+    if(!isset($_SESSION["userID"])|| $_SESSION["userID"] == "" )
+    {
+        $userWallet = 0;
+    }
+    else
+    {
+        $sql = "select wallet from users where id = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $_SESSION["userID"]);
+        $statement->execute();
+        $userWallet = $statement->fetchColumn();
+    }
+
+    //tinh tong tien
+    $orderPrice = 0;
+    foreach($_SESSION["cart"] as $cartKey => $product)
+    {
+        $orderPrice += $product["productPrice"];
+    }
+
+    //xoa sp
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        $cartKey = $_POST["cartKey"];
+        if(isset($_SESSION["cart"][$cartKey]))
+        {
+            unset($_SESSION["cart"][$cartKey]);
+            echo "xoa thanh cong";
+        }
+
+    }
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,14 +47,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playwrite+IT+Moderna:wght@100..400&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/payment.css">
+    
 </head>
 <body>
     <main>
         <div class="product-list-container">
             <button class="before-btn effect-btn"><i class="fa-solid fa-forward before "></i></button>
             <div class="product-list">
+
+            <?php
+            if(isset($_SESSION["cart"]) && !empty($_SESSION["cart"]))
+            {
+                foreach($_SESSION["cart"] as $cartKey => $product)
+                {
+                    
+                    echo '
+                    <div class="card" id="'.$cartKey.'">
+                    <a href="product-detail.php?productID='.$product["productID"].'"><div >
+                    <img src="images/products/'.$product["productImage"].'" alt="" width="100px" height="100px">
+                    <p>Số lượng : '.$product["productQuantity"].'</p>
+                    <p>Giá: '.number_format($product["productPrice"], 0, ',', '.').'</p>
+                    <p>Size: '.$product["productSize"].'</p>
+                    </div>
+                    
+                    </a>
+                    <button class="delete-btn" style="z-index: 1" type="button" onclick=\'deleteCard("'.$cartKey.'")\'><i class="fa-solid fa-trash"></i></button>
+                    </div>';
+                    
+                }
+            }
+            else
+            {
+                echo "<h3>Chưa có sản phẩm nào trong giỏ</h3>";
+            }
                 
-                <div class="card">
+            ?>
+                
+                <!-- <div class="card">
                     <img src="images/AK1.png" alt="" width="100px" height="100px">
                     <p>Số lượng : ?</p>
                     <p>Giá: 32$</p>
@@ -50,7 +117,7 @@
                     <img src="images/AK1-1.png" alt="" width="100px" height="100px">
                     <p>Số lượng : ?</p>
                     <p>Giá: 32$</p>
-                </div>
+                </div> -->
                 
             </div>
             <button class="after-btn effect-btn"><i class="fa-solid fa-forward after"></i></button>
@@ -59,11 +126,10 @@
 
         <div class="payment-info">
             
-                <p class="user-wallet">Tiền trong ví : 89999$  <a href="">Nạp tiền</a></p>
+                <p class="user-wallet">Tiền trong ví :<?php echo number_format($userWallet, 0, ',', '.') ?> VNĐ <a href="">Nạp tiền</a></p>
                 
-            
-            
-            <p class="total-price">Tổng : 99999$</p>
+            <?php echo '<p class="total-price">Tổng :'.number_format($orderPrice, 0, ',', '.').' VNĐ</p>'; ?>
+            <!-- <p class="total-price">Tổng : 99999$</p> -->
             <p>Phương thức thanh toán: </p>
             <form>
                 <label>
@@ -96,8 +162,7 @@
     
                 <button type="button" class="validate-btn btn" onclick="Payment(); displayDeliveryContainer()">Xác nhận</button>
                 <p class="payment-error">Error</p>
-                <button class="close-btn btn" onclick="hienHinh('')">X</button>
-    
+                <button class="closes-btn btn" onclick="hienHinh('')">X</button>
             </div>
         </div>
         <!-- thong tin dat hang -->
@@ -163,6 +228,9 @@
          </div>
         
     </main>
+    <?php
+    require "includes/footer.php";
+    ?>
     
     <script src="js/payment.js"></script>
    

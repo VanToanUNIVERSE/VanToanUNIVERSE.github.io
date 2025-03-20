@@ -358,14 +358,14 @@ function createOverflowForProductList() {
 function LoadPage() {
     
     
-    clear(productList);// clear
+    /* clear(productList);// clear
     clear(productPaymentList);
     
     //tao sp
     //them san pham va hien thi
     cards.forEach((card) => {
         addToList(card, productList);
-    });
+    }); */
 
     createOverflowForProductList();
 
@@ -373,7 +373,7 @@ function LoadPage() {
     addEven();
 
     //hien thi tien va so du
-    displayInfomation();
+    /* displayInfomation(); */
 }
 
     
@@ -389,3 +389,22 @@ beforeAndAfter.forEach(bt => {
         setTimeout(() => {bt.classList.remove('effect');}, 500);
     });
 });
+
+function deleteCard(cartKey)
+{
+    const card = document.getElementById(cartKey);
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../payment.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function()
+    {
+        if(xhr.readyState === 4 && xhr.status === 200)
+        {
+            card.style.display = 'none';
+            console.log(document.getElementById(cartKey));
+        }
+        
+    }
+    xhr.send("cartKey=" + cartKey);
+}

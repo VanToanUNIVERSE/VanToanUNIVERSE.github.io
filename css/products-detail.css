@@ -200,4 +200,12 @@
     transition: all 0.3s;
 }
 
+#submit-message {
+    position: absolute;
+    display: none;
+    font-size: 30px;
+    color: rgba(17, 255, 17, 0.669);
+    left: 30%;
+    transform: translate(100%, -110%);
+}
 
