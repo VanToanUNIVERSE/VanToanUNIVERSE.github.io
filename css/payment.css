@@ -83,6 +83,7 @@ main {
     top: 0;
     right: 0;
     transform: translate(-30%, 30%);
+    z-index: -1;
 }
 
 .product-list .card img {
@@ -138,6 +139,10 @@ main {
     transition: all 0.3s;
 }
 
+.payment-btn {
+    display: none;
+}
+
 .btn:hover {
     background-color: rgb(182, 2, 182);
     color: white;
@@ -145,6 +150,16 @@ main {
 
 .btn:active {
     transform: scale(0.9);
+}
+
+.address {
+    display: none;
+    width: 100%;
+    margin: 20px 0 0;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #333;
+    resize: none;
 }
 
 #address {
@@ -228,7 +243,7 @@ main {
     background-color: #bbb;
     padding:  20px 100px ;
    
-    display: none;
+   display: flex;
     flex-direction: column;
     gap: 20px;
 }
@@ -303,10 +318,23 @@ main {
     font-weight: bold;
 }
 
-.close-payment-detail-btn {
+.close-order-detail {
     position: absolute;
     top: 0;
-    left:3%;
+    right:3%;
+}
+
+.payment-success {
+    color: green;
+    font-size: 25px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #bbbbbb53;
+    padding: 50px;
+    backdrop-filter: blur(5px);
+    display: none;
 }
 
 /* LAM MAU CHO ZUI */

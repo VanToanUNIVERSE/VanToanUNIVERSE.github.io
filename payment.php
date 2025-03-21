@@ -1,27 +1,24 @@
 <?php
     require "includes/header.php";
     require "includes/productsData.php";
+    
 
     //lay va hien thi vi tien cua khach hang
     if(!isset($_SESSION["userID"])|| $_SESSION["userID"] == "" )
     {
-        $userWallet = 0;
-    }
-    else
-    {
-        $sql = "select wallet from users where id = ?";
-        $statement = $connection->prepare($sql);
-        $statement->bindParam(1, $_SESSION["userID"]);
-        $statement->execute();
-        $userWallet = $statement->fetchColumn();
+        $_SESSION["wallet"] = 0;
     }
 
     //tinh tong tien
-    $orderPrice = 0;
-    foreach($_SESSION["cart"] as $cartKey => $product)
+    $_SESSION["order-price"] = 0;
+    if(isset($_SESSION['cart']))
     {
-        $orderPrice += $product["productPrice"] * $product["productQuantity"];
+        foreach($_SESSION["cart"] as $cartKey => $product)
+        {
+            $_SESSION["order-price"] += $product["productPrice"] * $product["productQuantity"];
+        }
     }
+    
 
     //xoa sp
     if($_SERVER["REQUEST_METHOD"] == "POST")
@@ -29,11 +26,109 @@
         $cartKey = $_POST["cartKey"];
         if(isset($_SESSION["cart"][$cartKey]))
         {
+            $_SESSION["order-price"] -= $_SESSION["cart"][$cartKey]["productPrice"] * $_SESSION["cart"][$cartKey]["productQuantity"];
             unset($_SESSION["cart"][$cartKey]);
             echo "xoa thanh cong";
         }
-
     }
+
+    //THANH TOAN
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        if(isset($_POST["wallet"]) && isset($_SESSION["order-price"]))
+        {
+            
+            $_SESSION["wallet"] -= $_SESSION["order-price"];
+            
+            $sql = "UPDATE users SET wallet = :wallet WHERE id = :userID";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(":wallet", $_SESSION["wallet"]);
+            $statement->bindParam(":userID", $_SESSION["userID"]);
+            $statement->execute();
+            unset($_SESSION["cart"]);
+        }
+    }
+
+
+    //HIEN THI ORDERS
+    $sql = "select * from orders where user_ID = ?";
+    $statement = $connection->prepare($sql);
+    $statement->bindValue(1, $_SESSION["userID"], PDO::PARAM_INT);
+    $statement->execute();
+    $ordersData = $statement->fetchAll();
+
+    //HIEN THI CHI TIET ORDER
+
+    
+    
+
+    /* foreach($orderItemsData as $orderItem)
+    {
+        echo $orderItem["product_ID"];
+    } */
+    if(isset($_SERVER["REQUEST_METHOD"]) == "POST")
+    {
+        if(isset($_POST["orderID"]))
+        {
+            $orderID = $_POST["orderID"];
+            $sql = "select orders.*, payments.status as paymentStatus, payments.method FROM
+            orders LEFT JOIN payments ON orders.id = payments.order_ID
+            where orders.id = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID);
+            $statement->execute();
+            $order = $statement->fetch();
+
+            $sql = "select order_items.*, products.price AS productPrice, product_images.image from order_items left join products on order_items.product_ID = products.id inner join product_images on product_images.product_id = products.id and product_images.is_main = 1 where order_items.order_ID = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID);
+            $statement->execute();
+            $orderItems = $statement->fetchAll();
+
+
+            ob_clean();
+            echo '
+            <p>Mã đơn: '.$order["id"].'</p>
+            <p>Trạng thái đơn: '.$order["status"].'</p>
+            <p>Giá: '.number_format($order["price"]).' VNĐ</p>
+            <p>Địa chỉ nhận hàng: '.$order["address"].'</p>
+            <p>Phương thức thanh toán: '.$order["method"].'</p>
+            <p>Trạng thái thanh toán: '.$order["paymentStatus"].'</p>
+            <div class="product-list" id="payment-product-list">';
+
+            foreach($orderItems as $orderItem)
+            {
+                echo '<div class="card">
+                    <img src="images/products/'.$orderItem["image"].'" alt="" width="100px" height="100px">
+                    <p>Số lượng : '.$orderItem["quantity"].'</p>
+                    <p>Giá: '.number_format($orderItem["productPrice"]).' VNĐ</p>
+                </div>';
+            }
+                
+
+                /* <div class="card">
+                    <img src="images/AK1-1.png" alt="" width="100px" height="100px">
+                    <p>Số lượng : ?</p>
+                    <p>Giá: 32$</p>
+                </div>
+
+                <div class="card">
+                    <img src="images/AK1-1.png" alt="" width="100px" height="100px">
+                    <p>Số lượng : ?</p>
+                    <p>Giá: 32$</p>
+                </div>
+ */
+                
+            echo '</div>
+
+            <button class="close-order-detail btn" onclick="closePMD()">X</button>';
+                
+                exit();
+            
+        } 
+    }
+
+    
     
 ?>
 <!DOCTYPE html>
@@ -126,9 +221,9 @@
 
         <div class="payment-info">
             
-                <p class="user-wallet">Tiền trong ví :<?php echo number_format($userWallet, 0, ',', '.') ?> VNĐ <a href="">Nạp tiền</a></p>
+                <p class="user-wallet" data-wallet="<?php echo $_SESSION["wallet"] ?>">Tiền trong ví :<?php echo number_format($_SESSION["wallet"], 0, ',', '.') ?> VNĐ <a href="">Nạp tiền</a></p>
                 
-            <?php echo '<p class="total-price">Tổng :<span id="total-price-value">'.number_format($orderPrice, 0, ',', '.').'<span> VNĐ</p>'; ?>
+            <?php echo '<p class="total-price" data-total-price="'.$_SESSION["order-price"].'">Tổng :<span id="total-price-value">'.number_format($_SESSION["order-price"], 0, ',', '.').'<span> VNĐ</p>'; ?>
             <!-- <p class="total-price">Tổng : 99999$</p> -->
             <p>Phương thức thanh toán: </p>
             <form>
@@ -139,92 +234,103 @@
                   <input type="radio" name="payment-method" value="cod" id="cod"> Thanh toán khi nhận
                 </label> <br>
                 
-                <textarea name="address" id="address" rows="3" placeholder="Nhập địa chỉ"></textarea>
+                
+                <textarea class="address" style="display: block"; name="address" id="address" rows="3"><?php
+                    echo $_SESSION["address"] ?? "";
+                ?></textarea>
                 <small id="address-error">Khong dc trong</small>
                 <br>
-                <button class="btn payment-btn" type="button" onclick="">Thanh toan</button>
+                <button class="btn payment-btn" type="button" onclick="beforePayment()">Thanh toán</button>
               </form>
 
         </div>
 
         <div class="display-none">
             <div class="validate-payment">
-                <h2>Xác nhận thanh toán</h2>
-                <div class="product-payment-list">
-                    <p class="validate-product"><span class="validate-quantity">3 </span>Tên sản phâm</p>
+            <h2>Xác nhận thanh toán</h2>
+            <div class="product-payment-list">
+                <?php
+                    if(isset($_SESSION["cart"]) && !empty($_SESSION["cart"]))
+                    {
+                        foreach($_SESSION["cart"] as $cartKey => $product)
+                        {
+                            echo '<p class="validate-product"><span>'.$product["productQuantity"].' </span class="validate-quantity">'.$product["productName"].'</p>';
+                        }
+                    }
+                ?>
+                
+                    <!-- <p class="validate-product"><span class="validate-quantity">3 </span>Tên sản phâm</p>
                     <p class="validate-product"><span>3 </span class="validate-quantity">Tên sản phâm</p>
-                    <p class="validate-product"><span>3 </span class="validate-quantity">Tên sản phâm</p>
+                    <p class="validate-product"><span>3 </span class="validate-quantity">Tên sản phâm</p> -->
                 </div>
     
-                <h3 id="validate-total-price">999999$</h3>
+                <h3 id="validate-total-price"><?php echo number_format($_SESSION["order-price"], 0, ",", "."); ?> VNĐ</h3>
     
                 <p id="validate-address"></p>
+                <p id="validate-payment-method">Phương thức thanh toán</p>
     
-                <button type="button" class="validate-btn btn" onclick="Payment(); displayDeliveryContainer()">Xác nhận</button>
+                <button type="button" class="validate-btn btn" onclick="<?php echo 'Payment('.$_SESSION["wallet"].')';?>; displayDeliveryContainer()">Xác nhận</button>
                 <p class="payment-error">Error</p>
                 <button class="closes-btn btn" onclick="hienHinh('')">X</button>
             </div>
+            
         </div>
+        <div class="payment-success">Thanh toán thành công</div>
         <!-- thong tin dat hang -->
          <div class="delivery-container">
             <div class="delivery-head">
-                <h3>Mã vận đơn</h3>
+                <h3>Mã đơn</h3>
                 <h3>Trạng thái</h3>
                 <h3>Giá</h3>
+                <h3>Thời gian tạo</h3>
                 <h3 class="center">Thao tác</h3>
             </div>
-            <!-- <div class="delivery-item">
-                <p class="delivery-id">9953</p>
-                <p class="delivery-status">Đang giao</p>
-                <p class="delivery-price">99 $</p>
-                <div class="delivery-icons">
-                    <i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i>
-                    <i class="fa-solid fa-trash" title="Hủy đơn"></i>
-                </div>
-            </div>
-
-            <div class="delivery-item">
-                <p class="delivery-id">9953</p>
-                <p class="delivery-status">Đang giao</p>
-                <p class="delivery-price">99 $</p>
-                <div class="delivery-icons">
-                    <i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i>
-                    <i class="fa-solid fa-trash" title="Hủy đơn"></i>
-                </div>
-            </div> -->
-
+                
+            <?php
+                if(!empty($ordersData))
+                {
+                    foreach($ordersData as $order)
+                    {
+                        echo '
+                            <div class="delivery-item">
+                                <p class="delivery-id">'.$order["id"].'</p>
+                                <p class="delivery-status">'.$order["status"].'</p>
+                                <p class="delivery-price">'.number_format($order["price"], 0, ',', '.').' VNĐ</p>
+                                <p class="delivery-create-time">'.$order["create_time"].'</p>
+                                <div class="delivery-icons">
+                                    <button type="button" onclick=\'showOrderDetails("'.$order["id"].'")\'><i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i></button>
+                                    <button type="button" class=""><i class="fa-solid fa-trash" title="Hủy đơn"></i></button>
+                                </div>
+                            </div>
+                        ';
+                    }
+                    
+                }
+                else
+                {
+                    echo "<h3>Bạn chưa có đơn hàng nào</h3>";
+                }
+            ?>
 
          </div>
 
-         <div class="payment-detail">
-            <p>Mã vận đơn</p>
-            <p>Trạng thái</p>
-            <p>Giá</p>
-            <p>Địa chỉ nhận hàng</p>
-            <p>Phương thức thanh toán</p>
-            <div class="product-list" id="payment-product-list">
-                <div class="card">
-                    <img src="images/AK1-1.png" alt="" width="100px" height="100px">
-                    <p>Số lượng : ?</p>
-                    <p>Giá: 32$</p>
-                </div>
 
-                <div class="card">
-                    <img src="images/AK1-1.png" alt="" width="100px" height="100px">
-                    <p>Số lượng : ?</p>
-                    <p>Giá: 32$</p>
-                </div>
-
-                <div class="card">
-                    <img src="images/AK1-1.png" alt="" width="100px" height="100px">
-                    <p>Số lượng : ?</p>
-                    <p>Giá: 32$</p>
-                </div>
-
+        <div class="payment-detail">
+            <?php
+                if(!empty($orderItemsData))
+                {
+                foreach($orderItemsData as $orderItem)
+                {
+                    if($orderItem["id"] == 1)
+                    {
+                       
+                    }
+                }
                 
-            </div>
-
-            <button class="close-payment-detail-btn btn" onclick="closePMD()">X</button>
+            }
+            
+            ?>
+            
          </div>
         
     </main>

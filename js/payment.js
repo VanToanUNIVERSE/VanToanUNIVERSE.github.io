@@ -131,39 +131,47 @@ function addEven() {
     //nut thanh toan
     
     paymentButton.addEventListener('click', () => {
-        const checkedPayment = document.querySelector('input[name="payment-method"]:checked');
-        if(checkedPayment.value == 'wallet') {
-            validateAddress.innerHTML = "Địa chỉ: " + user1.getAddress();
-        }
-        else {
+        const address = document.getElementById("address");
             if(address.value.trim() == '') {
-                addressError.innerHTML = 'Can not empty';
-                addressError.style.display = 'block';
-                address.style.borderBottom = '1px solid red';
+                    addressError.innerHTML = 'Can not empty';
+                    addressError.style.display = 'block';
+                    address.style.borderBottom = '1px solid red';
+                    
+                    
                 setTimeout(() => {
                     addressError.style.display = 'none';
                     address.style.borderBottom = '1px solid #333';
                 }, 2000);
-                
-                return;
-                
+
+            }         
+            const checkedPayment = document.querySelector('input[name="payment-method"]:checked');
+            console.log(checkedPayment.value);
+            if(checkedPayment.value == 'wallet')
+            {
+                document.getElementById("validate-payment-method").innerHTML = "Phương thức thanh toán: Wallet";
             }
-            validateAddress.innerHTML = "Địa chỉ: " + address.value;
-        }
+            else
+            {
+                document.getElementById("validate-payment-method").innerHTML = "Phương thức thanh toán: Thanh toán khi nhận hàng";
+            }
+            
+            validateAddress.innerHTML = address.value;
         hienHinh();
     });
 
    
     //thay doi phuong thuc thanh toan
-    document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+    /* document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
         radio.addEventListener('change', function() {
             if(this.value == "cod") {
                 address.style.display = 'block';
+                document.getElementById("address-wallet").style.display = "none";
             } else {
                 address.style.display = 'none';
+                document.getElementById("address-wallet").style.display = "block";
             }
         });
-    });
+    }); */
 }
 
 
@@ -176,7 +184,7 @@ function hienHinh() {
     
 }
 
-function Payment() {
+/* function Payment() {
     const checkedPayment = document.querySelector('input[name="payment-method"]:checked');
     console.log(checkedPayment.value);
     if(checkedPayment.value == 'wallet') {
@@ -197,7 +205,7 @@ function Payment() {
         hienHinh();
     }
      
-}
+} */
 
 //delivery
 
@@ -390,7 +398,8 @@ beforeAndAfter.forEach(bt => {
     });
 });
 
-function deleteCard(cartKey)
+//lien quan backend
+function deleteCard(cartKey) //ham xoa AJAX
 {
     const card = document.getElementById(cartKey);
     xhr = new XMLHttpRequest();
@@ -402,6 +411,7 @@ function deleteCard(cartKey)
         if(xhr.readyState === 4 && xhr.status === 200)
         {
             card.style.display = 'none';
+            
             console.log(document.getElementById(cartKey));
         }
         
@@ -415,13 +425,81 @@ function deleteCardUI(cartKey)
     const productPrice = document.getElementById(cartKey + "-price").getAttribute("data-price");
     const productQuantity = document.getElementById(cartKey + "-quantity").getAttribute("data-quantity");
     const cardPrice = productQuantity * productPrice;
-    const totalPrice = document.getElementById("total-price-value").innerText;
-    let totalPriceValue = parseInt(totalPrice.replace(/\./g, ""), 10);;
-    console.log(totalPriceValue);
+    const totalPrice = document.querySelector(".total-price");
+    let totalPriceValue = totalPrice.getAttribute("data-total-price");
     totalPriceValue -= parseFloat(cardPrice);
-    document.getElementById("total-price-value").innerHTML = totalPriceValue.toLocaleString("vi-VN");
+    totalPrice.setAttribute("data-total-price", totalPriceValue);
+    totalPrice.innerHTML = totalPriceValue.toLocaleString("vi-VN") + " VNĐ";
+    validateTotalPrice.innerHTML = totalPriceValue.toLocaleString("vi-VN") + " VNĐ";
     if(totalPriceValue == 0)
     {
         document.querySelector(".product-list").innerHTML = "<h3>Chưa có sản phẩm nào</h3>";
+        document.querySelector(".payment-btn").style.display = "none";
     }
+}
+
+if(productList.querySelector(".card")) // neu chua co san pham khong hien thi nut thanh toan
+{
+    paymentButton.style.display = "block";
+}
+
+function Payment(wallet) //ham thanh toan AJAX
+{
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../payment.php");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    let userWalletValue = parseFloat(userWallet.getAttribute("data-wallet"));
+    const totalPriceValue = parseFloat(totalPrice.getAttribute("data-total-price"));
+    console.log(userWalletValue);
+    console.log(totalPriceValue);
+    if(userWalletValue < totalPriceValue)
+    {
+        paymentError.innerHTML = "Tiền trong ví không đủ, vui lòng nạp thêm";
+        paymentError.style.display = "block";
+        setTimeout(() => {paymentError.style.display = "none"}, 2000);
+    }
+    else
+    {
+        
+        xhr.onreadystatechange = function()
+        {
+            if(xhr.readyState === 4 && xhr.status === 200)
+            {    
+                clear(productList);// clear
+                clear(productPaymentList);
+                userWalletValue -= totalPriceValue;//tru tien
+                userWallet.setAttribute("data-wallet", userWalletValue); //cap nhat data-wallet
+                totalPrice.setAttribute("data-total-price", 0);
+                userWallet.innerHTML = "Tiền trong ví: " + userWalletValue.toLocaleString("vi-VN") + " VNĐ";
+                totalPrice.innerHTML = "";
+                productList.innerHTML = "<h3>Chưa có sản phẩm nào</h3>";
+                paymentValidate.style.display = "none";
+                document.querySelector(".payment-success").style.display = "block";
+                setTimeout(() => {document.querySelector(".payment-success").style.display = "none";}, 2000);
+            }
+        }
+        xhr.send("wallet=" + wallet);
+    }
+}
+
+function showOrderDetails(orderID)
+{
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../payment.php");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function()
+    {
+        if(xhr.readyState === 4 && xhr.status === 200)
+        {
+            const orderDetails = document.querySelector(".payment-detail");
+            orderDetails.style.display = "block";
+            const respone = xhr.responseText;
+            console.log(respone);
+            orderDetails.innerHTML = respone;
+        }
+        
+    }
+    xhr.send("orderID=" + orderID);
 }
