@@ -45,7 +45,8 @@ function updateButtonState() {
 // AJAX
 function addToCart(productID, productName, productQuantity, productPrice, productImage)
 {
-    const productSize = document.getElementById('size').value;
+    const productSize = document.getElementById('size').value.trim();
+    console.log(productSize);
     xhr = new XMLHttpRequest();
     xhr.open("POST", "../product-detail.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

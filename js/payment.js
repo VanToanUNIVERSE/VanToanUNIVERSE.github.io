@@ -438,50 +438,61 @@ function deleteCardUI(cartKey)
     }
 }
 
-if(productList.querySelector(".card")) // neu chua co san pham khong hien thi nut thanh toan
+if(!productList.querySelector(".card")) // neu chua co san pham khong hien thi nut thanh toan
 {
-    paymentButton.style.display = "block";
+    paymentButton.style.display = "none";
 }
 
-function Payment(wallet) //ham thanh toan AJAX
-{
+function Payment(wallet, orderPrice) //ham thanh toan AJAX
+{   let status = "Chưa thanh toán";
+    const checkedPayment = document.querySelector('input[name="payment-method"]:checked').value;
+    if(checkedPayment == "wallet")
+    {
+        status = "Đã thanh toán";
+    }
     xhr = new XMLHttpRequest();
     xhr.open("POST", "../payment.php");
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    let userWalletValue = parseFloat(userWallet.getAttribute("data-wallet"));
-    const totalPriceValue = parseFloat(totalPrice.getAttribute("data-total-price"));
-    console.log(userWalletValue);
-    console.log(totalPriceValue);
-    if(userWalletValue < totalPriceValue)
-    {
-        paymentError.innerHTML = "Tiền trong ví không đủ, vui lòng nạp thêm";
-        paymentError.style.display = "block";
-        setTimeout(() => {paymentError.style.display = "none"}, 2000);
-    }
-    else
-    {
         
-        xhr.onreadystatechange = function()
-        {
-            if(xhr.readyState === 4 && xhr.status === 200)
-            {    
-                clear(productList);// clear
+    xhr.onreadystatechange = function()
+    {
+        if(xhr.readyState === 4 && xhr.status === 200)
+        {    
+            const response = JSON.parse(xhr.responseText);
+            console.log(xhr.responseText);
+            if(response.message == "1")
+            {
+                paymentError.innerHTML = "Không đủ tiền trong ví";
+                console.log(response.message);
+                paymentError.style.display = "block";
+                setTimeout(() => {paymentError.style.display = "none";}, 2000);
+                return;
+            }
+            
+                const walletElement = document.querySelector(".user-wallet");
+                walletElement.innerHTML = "Tiền trong ví: " + parseFloat(response.wallet).toLocaleString("vi-VN") + " VNĐ";
+                const totalPriceElement = document.querySelector(".total-price");
+                totalPriceElement.innerHTML = "Tổng " + parseFloat(response.orderPrice).toLocaleString("vi-VN") + " VNĐ";;
+                clear(productList);
                 clear(productPaymentList);
-                userWalletValue -= totalPriceValue;//tru tien
-                userWallet.setAttribute("data-wallet", userWalletValue); //cap nhat data-wallet
-                totalPrice.setAttribute("data-total-price", 0);
-                userWallet.innerHTML = "Tiền trong ví: " + userWalletValue.toLocaleString("vi-VN") + " VNĐ";
-                totalPrice.innerHTML = "";
-                productList.innerHTML = "<h3>Chưa có sản phẩm nào</h3>";
-                paymentValidate.style.display = "none";
+                validatePayment.style.display = "none";
                 document.querySelector(".payment-success").style.display = "block";
                 setTimeout(() => {document.querySelector(".payment-success").style.display = "none";}, 2000);
-            }
+                paymentButton.style.display = "none";
+
+                
+                const div = document.createElement("div");
+                div.classList.add("delivery-item");
+                div.setAttribute("id", response.orderID);
+                div.innerHTML = response.delivery;
+                deliveryContainer.appendChild(div);
+                deliveryContainer.style.display = "flex";
+              
         }
-        xhr.send("wallet=" + wallet);
     }
+    xhr.send("wallet=" + wallet +"&orderPrice=" + orderPrice + "&address=" + address.value + "&method=" + checkedPayment + "&status=" + status);
 }
+
 
 function showOrderDetails(orderID)
 {
@@ -494,12 +505,69 @@ function showOrderDetails(orderID)
         if(xhr.readyState === 4 && xhr.status === 200)
         {
             const orderDetails = document.querySelector(".payment-detail");
-            orderDetails.style.display = "block";
+            orderDetails.style.display = "flex";
             const respone = xhr.responseText;
             console.log(respone);
             orderDetails.innerHTML = respone;
         }
         
     }
-    xhr.send("orderID=" + orderID);
+    xhr.send("action=show&orderID=" + orderID);
 }
+
+function cancelOrder(orderID)
+{
+    const deliveryStatus = document.getElementById(orderID + "-status");
+    const delivery = document.getElementById(orderID);
+    let remove = 0;
+    if(deliveryStatus.innerHTML == "Đã hủy") 
+    {
+        remove = 1;
+    }
+    
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../payment.php");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+    xhr.onreadystatechange = function()
+    {
+        if(xhr.readyState === 4 && xhr.status === 200)
+        {
+            
+            if(deliveryStatus.innerHTML == "Đã hủy") //neu da cancel thi xoa
+            {
+                deliveryContainer.removeChild(delivery);
+                if(!deliveryContainer.querySelector(".delivery-item"))
+                {
+                    deliveryContainer.style.display = "none";
+                }
+            }
+            else
+            {
+                const cancelButton = document.getElementById("cancel-btn");
+                cancelButton.setAttribute("title", "Xóa đơn");
+                deliveryStatus.innerHTML = xhr.responseText;
+            }      
+        }
+        
+    }
+    xhr.send("action=cancel&orderID=" + orderID + "&remove=" + remove);
+}
+
+function beforePayment()
+{
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../payment.php");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState === 4 && xhr.status === 200)
+        {
+            productPaymentList.innerHTML = xhr.responseText;
+            console.log(xhr.responseText);
+        }
+    }
+    xhr.send("beforePayment=1");
+}
+
+
+

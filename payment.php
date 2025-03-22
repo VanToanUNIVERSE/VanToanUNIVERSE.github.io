@@ -23,40 +23,136 @@
     //xoa sp
     if($_SERVER["REQUEST_METHOD"] == "POST")
     {
-        $cartKey = $_POST["cartKey"];
-        if(isset($_SESSION["cart"][$cartKey]))
+        if(isset($_POST["cartKey"]))
         {
-            $_SESSION["order-price"] -= $_SESSION["cart"][$cartKey]["productPrice"] * $_SESSION["cart"][$cartKey]["productQuantity"];
-            unset($_SESSION["cart"][$cartKey]);
-            echo "xoa thanh cong";
+            if(isset($_SESSION["cart"][$cartKey]))
+            {
+
+                $_SESSION["order-price"] -= $_SESSION["cart"][$cartKey]["productPrice"] * $_SESSION["cart"][$cartKey]["productQuantity"];
+                unset($_SESSION["cart"][$cartKey]);
+            }
+        }
+        
+    }
+
+    //hien thi nhung sp xac nhan
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        if(isset($_POST["beforePayment"]))
+        {
+            ob_clean();
+            foreach($_SESSION["cart"] as $cartKey => $product)
+            {
+                echo '<p class="validate-product"><span class="validate-quantity">'.$product["productQuantity"].' </span>'.$product["productName"].'</p>';
+            }
+            exit();
         }
     }
+    
 
     //THANH TOAN
     if($_SERVER["REQUEST_METHOD"] == "POST")
     {
-        if(isset($_POST["wallet"]) && isset($_SESSION["order-price"]))
+        if(isset($_POST["wallet"]) && isset($_POST["wallet"]) && isset($_POST["method"]) && isset($_POST["status"]))
         {
+            $address = $_POST["address"];
+            $wallet = $_POST["wallet"];
+            $method = $_POST["method"];
+            $status = $_POST["status"];
+            $orderPrice = $_POST["orderPrice"];
+
+            if($wallet < $orderPrice && $method == "wallet")
+            {
+                $response = ["message" => "1"];
+                ob_clean();
+                echo json_encode($response);
+                exit();
+            }
+            else if($method == "wallet" && $wallet >= $orderPrice)
+            {
+                $wallet -= $orderPrice;
+            }
             
-            $_SESSION["wallet"] -= $_SESSION["order-price"];
-            
-            $sql = "UPDATE users SET wallet = :wallet WHERE id = :userID";
+            $sql = "update users set wallet = ? where id = ?";
             $statement = $connection->prepare($sql);
-            $statement->bindParam(":wallet", $_SESSION["wallet"]);
-            $statement->bindParam(":userID", $_SESSION["userID"]);
+            $statement->bindParam(1, $wallet);
+            $statement->bindParam(2, $_SESSION["userID"]);
             $statement->execute();
+            $_SESSION["wallet"] = $wallet;
+            $_SESSION["orderPrice"] = 0;
+            
+            
+
+
+            $sql = "insert into orders(user_ID, price, address) values (?, ?, ?)";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $_SESSION["userID"]);
+            $statement->bindParam(2, $orderPrice);
+            $statement->bindParam(3, $address);
+            $statement->execute();
+
+            $orderID = $connection->lastInsertId();
+            
+            $sql = "insert into payments(order_ID, method, status) values (?, ?, ?)";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID);
+            $statement->bindParam(2, $method);
+            $statement->bindParam(3, $status);
+            $statement->execute();
+
+            foreach($_SESSION["cart"] as $cartKey => $product)
+            {
+                $sql = "INSERT INTO order_items(order_ID, product_ID, quantity, price, size) VALUES (?, ?, ?, ?, ?)";
+                $statement = $connection->prepare($sql);
+                $statement->bindParam(1, $orderID);
+                $statement->bindParam(2, $product["productID"]);
+                $statement->bindParam(3, $product["productQuantity"]);
+                $price = $product["productPrice"] * $product["productQuantity"];
+                $statement->bindParam(4, $price);
+                $statement->bindParam(5, $product["productSize"]);
+                $statement->execute();
+            }
+
+            $sql = "select create_time from orders where id = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID);
+            $statement->execute();
+            $createTime = $statement->fetchColumn();
+
+            ob_clean();
+            $response = [
+                "wallet" => $wallet,
+                "orderPrice" => 0,
+                "delivery" => '
+                            <p class="delivery-id">'.$orderID.'</p>
+                                <p class="delivery-status" id="'.$orderID.'-status">Chờ xác nhận</p>
+                                <p class="delivery-price">'.number_format($orderPrice, 0, ',', '.').' VNĐ</p>
+                                <p class="delivery-create-time">'.$createTime.'</p>
+                                <div class="delivery-icons">
+                                    <button type="button" onclick=\'showOrderDetails("'.$orderID.'")\'><i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i></button>
+                                    <button id="cancel-btn" type="button" onclick=\'cancelOrder("'.$orderID.'")\'><i class="fa-solid fa-trash" title="Hủy đơn"></i></button>
+                                </div>
+                ',
+                "orderID" => $orderID
+            ];
+            echo json_encode($response);
+
+
             unset($_SESSION["cart"]);
+            exit();
         }
     }
 
 
     //HIEN THI ORDERS
-    $sql = "select * from orders where user_ID = ?";
-    $statement = $connection->prepare($sql);
-    $statement->bindValue(1, $_SESSION["userID"], PDO::PARAM_INT);
-    $statement->execute();
-    $ordersData = $statement->fetchAll();
-
+    if(isset($_SESSION["userID"]))
+    {
+        $sql = "select * from orders where user_ID = ?";
+        $statement = $connection->prepare($sql);
+        $statement->bindValue(1, $_SESSION["userID"], PDO::PARAM_INT);
+        $statement->execute();
+        $ordersData = $statement->fetchAll();
+    }
     //HIEN THI CHI TIET ORDER
 
     
@@ -66,9 +162,10 @@
     {
         echo $orderItem["product_ID"];
     } */
-    if(isset($_SERVER["REQUEST_METHOD"]) == "POST")
+    if(isset($_SERVER["REQUEST_METHOD"]) == "POST")// xem chi tiet don
     {
-        if(isset($_POST["orderID"]))
+        $action = $_POST["action"] ?? "";
+        if(isset($_POST["orderID"]) && $action == "show")
         {
             $orderID = $_POST["orderID"];
             $sql = "select orders.*, payments.status as paymentStatus, payments.method FROM
@@ -84,7 +181,7 @@
             $statement->bindParam(1, $orderID);
             $statement->execute();
             $orderItems = $statement->fetchAll();
-
+            $paymentMethod = $order["method"] == "wallet" ? "Tiền trong ví" : "Thanh toán khi nhận hàng";
 
             ob_clean();
             echo '
@@ -92,16 +189,23 @@
             <p>Trạng thái đơn: '.$order["status"].'</p>
             <p>Giá: '.number_format($order["price"]).' VNĐ</p>
             <p>Địa chỉ nhận hàng: '.$order["address"].'</p>
-            <p>Phương thức thanh toán: '.$order["method"].'</p>
+            <p>Phương thức thanh toán: '.$paymentMethod.'</p>
             <p>Trạng thái thanh toán: '.$order["paymentStatus"].'</p>
-            <div class="product-list" id="payment-product-list">';
+            <div id="payment-product-list">';
+
+
+            
+            
 
             foreach($orderItems as $orderItem)
             {
                 echo '<div class="card">
                     <img src="images/products/'.$orderItem["image"].'" alt="" width="100px" height="100px">
+                    <p>Size : '.$orderItem["size"].'</p>
                     <p>Số lượng : '.$orderItem["quantity"].'</p>
-                    <p>Giá: '.number_format($orderItem["productPrice"]).' VNĐ</p>
+                    <p>Đơn giá: '.number_format($orderItem["productPrice"]).' VNĐ</p>
+                    <p>Số lượng: '.$orderItem["quantity"].'</p>
+                    <p>Tổng: '.number_format($orderItem["price"]).' VNĐ</p>
                 </div>';
             }
                 
@@ -121,11 +225,29 @@
                 
             echo '</div>
 
-            <button class="close-order-detail btn" onclick="closePMD()">X</button>';
+            <button class="close-order-detail btn" onclick="closePMD();">X</button>';
                 
                 exit();
             
         } 
+    }
+    if(isset($_POST["orderID"]) && $action == "cancel")//huy don
+    {
+        if(isset($_POST["remove"]) && $_POST["remove"] == 1)
+        {
+            $sql = "delete from orders where id = ?";
+        }
+        else
+        {   
+            $sql = "update orders set status = 'Đã hủy' where id = ?";
+        }
+        
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $_POST["orderID"]);
+        $statement->execute();
+        ob_clean();
+        echo "Đã hủy";
+        exit();
     }
 
     
@@ -249,15 +371,15 @@
             <div class="validate-payment">
             <h2>Xác nhận thanh toán</h2>
             <div class="product-payment-list">
-                <?php
-                    if(isset($_SESSION["cart"]) && !empty($_SESSION["cart"]))
+                
+                    <!-- if(isset($_SESSION["cart"]) && !empty($_SESSION["cart"]))
                     {
                         foreach($_SESSION["cart"] as $cartKey => $product)
                         {
                             echo '<p class="validate-product"><span>'.$product["productQuantity"].' </span class="validate-quantity">'.$product["productName"].'</p>';
                         }
                     }
-                ?>
+                 -->
                 
                     <!-- <p class="validate-product"><span class="validate-quantity">3 </span>Tên sản phâm</p>
                     <p class="validate-product"><span>3 </span class="validate-quantity">Tên sản phâm</p>
@@ -269,7 +391,7 @@
                 <p id="validate-address"></p>
                 <p id="validate-payment-method">Phương thức thanh toán</p>
     
-                <button type="button" class="validate-btn btn" onclick="<?php echo 'Payment('.$_SESSION["wallet"].')';?>; displayDeliveryContainer()">Xác nhận</button>
+                <button type="button" class="validate-btn btn" onclick="<?php echo 'Payment('.$_SESSION["wallet"].', '.$_SESSION["order-price"].')';?>; displayDeliveryContainer();">Xác nhận</button>
                 <p class="payment-error">Error</p>
                 <button class="closes-btn btn" onclick="hienHinh('')">X</button>
             </div>
@@ -292,14 +414,14 @@
                     foreach($ordersData as $order)
                     {
                         echo '
-                            <div class="delivery-item">
+                            <div class="delivery-item" id="'.$order["id"].'">
                                 <p class="delivery-id">'.$order["id"].'</p>
-                                <p class="delivery-status">'.$order["status"].'</p>
+                                <p class="delivery-status" id="'.$order["id"].'-status">'.$order["status"].'</p>
                                 <p class="delivery-price">'.number_format($order["price"], 0, ',', '.').' VNĐ</p>
                                 <p class="delivery-create-time">'.$order["create_time"].'</p>
                                 <div class="delivery-icons">
                                     <button type="button" onclick=\'showOrderDetails("'.$order["id"].'")\'><i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i></button>
-                                    <button type="button" class=""><i class="fa-solid fa-trash" title="Hủy đơn"></i></button>
+                                    <button id="cancel-btn" type="button" onclick=\'cancelOrder("'.$order["id"].'")\'><i class="fa-solid fa-trash" title="Hủy đơn"></i></button>
                                 </div>
                             </div>
                         ';
@@ -308,7 +430,8 @@
                 }
                 else
                 {
-                    echo "<h3>Bạn chưa có đơn hàng nào</h3>";
+                
+                    echo "<script> document.querySelector('.delivery-container').style.display = 'none';</script>";
                 }
             ?>
 
@@ -316,20 +439,6 @@
 
 
         <div class="payment-detail">
-            <?php
-                if(!empty($orderItemsData))
-                {
-                foreach($orderItemsData as $orderItem)
-                {
-                    if($orderItem["id"] == 1)
-                    {
-                       
-                    }
-                }
-                
-            }
-            
-            ?>
             
          </div>
         

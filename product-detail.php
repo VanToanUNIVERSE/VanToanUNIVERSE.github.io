@@ -39,7 +39,6 @@
                 "productPrice" => $productPrice,
                 "productSize" => $productSize,
                 "productImage" => $productImage
-
             ];
         }
     }

@@ -86,7 +86,7 @@
             </div>   
         </div>
 
-        <div class="orders-history">
+        <div class="orders-history" style="display: none">
             <h3 class="order-title">Danh sách đơn hàng</h3>
             <div class="order-header">
                 <h3>Mã vận đơn</h3>
