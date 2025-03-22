@@ -136,27 +136,31 @@ function addEven() {
                     addressError.innerHTML = 'Can not empty';
                     addressError.style.display = 'block';
                     address.style.borderBottom = '1px solid red';
-                    
-                    
                 setTimeout(() => {
                     addressError.style.display = 'none';
                     address.style.borderBottom = '1px solid #333';
                 }, 2000);
 
-            }         
-            const checkedPayment = document.querySelector('input[name="payment-method"]:checked');
-            console.log(checkedPayment.value);
-            if(checkedPayment.value == 'wallet')
-            {
-                document.getElementById("validate-payment-method").innerHTML = "Phương thức thanh toán: Wallet";
             }
             else
             {
-                document.getElementById("validate-payment-method").innerHTML = "Phương thức thanh toán: Thanh toán khi nhận hàng";
-            }
+                const checkedPayment = document.querySelector('input[name="payment-method"]:checked');
+                console.log(checkedPayment.value);
+                hienHinh();
+                if(checkedPayment.value == 'wallet')
+                {
+                    document.getElementById("validate-payment-method").innerHTML = "Phương thức thanh toán: Wallet";
+                }
+                else
+                {
+                    document.getElementById("validate-payment-method").innerHTML = "Phương thức thanh toán: Thanh toán khi nhận hàng";
+                }
+                
+                validateAddress.innerHTML = "Địa chỉ nhận hàng: " +  address.value;
+                
+            }  
             
-            validateAddress.innerHTML = address.value;
-        hienHinh();
+           
     });
 
    
@@ -458,8 +462,9 @@ function Payment(wallet, orderPrice) //ham thanh toan AJAX
     {
         if(xhr.readyState === 4 && xhr.status === 200)
         {    
-            const response = JSON.parse(xhr.responseText);
             console.log(xhr.responseText);
+            const response = JSON.parse(xhr.responseText);
+            
             if(response.message == "1")
             {
                 paymentError.innerHTML = "Không đủ tiền trong ví";
@@ -563,7 +568,6 @@ function beforePayment()
         if(xhr.readyState === 4 && xhr.status === 200)
         {
             productPaymentList.innerHTML = xhr.responseText;
-            console.log(xhr.responseText);
         }
     }
     xhr.send("beforePayment=1");

@@ -8,6 +8,10 @@
     {
         $_SESSION["wallet"] = 0;
     }
+    else//neu chua dang nhap
+    {
+
+    }
 
     //tinh tong tien
     $_SESSION["order-price"] = 0;
@@ -140,6 +144,60 @@
 
             unset($_SESSION["cart"]);
             exit();
+            
+        
+            /*else //neu chua dang nhap
+            {
+                 if(isset($_SESSION["orderID"])) //neu chua tao session orderid
+                {
+                    $_SESSION["orderID"] = 1; //tao session orderid
+                    $orderID = $_SESSION["orderID"];
+                }
+                else//neu da tao
+                {
+                    $_SESSION["orderID"] += 1; //tang orderid de khong trung
+                    $orderID = $_SESSION["orderID"];
+                }
+
+                if (!isset($_SESSION["orders"])) {
+                    $_SESSION["orders"] = []; // Khởi tạo mảng orders nếu chưa tồn tại
+                }
+                
+                $_SESSION["orders"][$orderID] = 
+                [
+                    /* $address = 
+                    $wallet = $_POST["wallet"];
+                    $method = $_POST["method"];
+                    $status = $_POST["status"];
+                    $orderPrice = $_POST["orderPrice"]; 
+                    "address" => $_POST["address"],
+                    "method" => $_POST["method"],
+                    "status" => $_POST["status"],
+                    "orderPrice" => $_POST["orderPrice"],
+                    "createTime" => date("Y-m-d H:i:s")
+
+                ]; // tao session orders
+
+                $response = [
+                    "orderPrice" => 0,
+                    "delivery" => '
+                                <p class="delivery-id">'.$orderID.'</p>
+                                    <p class="delivery-status" id="'.$orderID.'-status">Chờ xác nhận</p>
+                                    <p class="delivery-price">'.number_format($_SESSION["orders"][$orderID]["orderPrice"], 0, ',', '.').' VNĐ</p>
+                                    <p class="delivery-create-time">'.$_SESSION["orders"][$orderID]["createTime"].'</p>
+                                    <div class="delivery-icons">
+                                        <button type="button" onclick=\'showOrderDetails("'.$orderID.'")\'><i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i></button>
+                                        <button id="cancel-btn" type="button" onclick=\'cancelOrder("'.$orderID.'")\'><i class="fa-solid fa-trash" title="Hủy đơn"></i></button>
+                                    </div>
+                    ',
+                    "orderID" => $orderID
+                ];
+                
+                ob_clean();
+                echo json_encode();
+                exit(); 
+            }*/
+            
         }
     }
 
@@ -349,8 +407,20 @@
             <!-- <p class="total-price">Tổng : 99999$</p> -->
             <p>Phương thức thanh toán: </p>
             <form>
-                <label>
-                  <input type="radio" name="payment-method" value="wallet" id="wallet" checked> Ví wallet
+            <?php
+                
+                    
+                        if(!isset($_SESSION["userID"])) //neu chua dang nhap
+                        {
+                            echo '<label title="Đăng nhập để có thanh thanh toán bằng ví wallet"><input disabled type="radio" name="payment-method" value="wallet" id="wallet" > Ví wallet
+                            </label>'; //k thanh toan bang wallet dc
+                        }
+                        else
+                        {
+                           echo '<label><input type="radio" name="payment-method" value="wallet" id="wallet" checked> Ví wallet'; // dc thanh toan bang wallet
+                        }
+                    ?>
+                  
                 </label>
                 <label>
                   <input type="radio" name="payment-method" value="cod" id="cod"> Thanh toán khi nhận
@@ -391,7 +461,17 @@
                 <p id="validate-address"></p>
                 <p id="validate-payment-method">Phương thức thanh toán</p>
     
-                <button type="button" class="validate-btn btn" onclick="<?php echo 'Payment('.$_SESSION["wallet"].', '.$_SESSION["order-price"].')';?>; displayDeliveryContainer();">Xác nhận</button>
+                <button type="button" class="validate-btn btn" onclick="<?php
+               
+                        if(isset($_SESSION["userID"]))
+                        {
+                            echo 'Payment('.$_SESSION["wallet"].', '.$_SESSION["order-price"].')';
+                        }
+                        else
+                        {
+                            echo "window.location.href='login.php'";
+                        }                         
+                ?>; /* displayDeliveryContainer(); */">Xác nhận</button>
                 <p class="payment-error">Error</p>
                 <button class="closes-btn btn" onclick="hienHinh('')">X</button>
             </div>
