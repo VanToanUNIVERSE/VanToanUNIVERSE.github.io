@@ -64,7 +64,7 @@
                                     <?php
                                         foreach($categoriesData as $dt)
                                         {
-                                            echo '<li><a href="product.php" id="'.$dt["id"].'">'.$dt["name"].'</a></li>';
+                                            echo '<li><a href="product.php?page=1&categoryID='.$dt["id"].'" id="'.$dt["id"].'">'.$dt["name"].'</a></li>';
                                             echo '<script>console.log(document.querySelector(".drop-down-content"))</script>';
                                         }
                                     ?>
@@ -91,13 +91,13 @@
 
         <div class="introduce">
             <div class="left">
-                <h3>A place where you can buy any clothes you want</h3>
+                <h3>Nơi bạn thỏa sức lựa chọn phong cách thời trang riêng!</h3>
                 <div class="negavi">
-                    <a href="#products">Shopping now</a>
+                    <a href="#products">Mua sắm ngay</a>
                     <?php 
                     if(!isset(($_SESSION["userID"])))
                     {
-                        echo '<a id="login" href="login.php">Login</a>';    
+                        echo '<a id="login" href="login.php">Đăng nhập</a>';    
                     }
                    
                                     

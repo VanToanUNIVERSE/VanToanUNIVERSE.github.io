@@ -223,10 +223,21 @@
                 {
                    if(isset($_GET["categoryID"]))
                    {
-                    
-                    echo '
+
+                    if($i == $page) //neu la trang hien tai
+                    {
+                        
+                        echo '<a style="text-decoration: underline;" href="product.php?page='.$i.'&categoryID='.$_GET["categoryID"].'">'.$i.'</a>
+                ';//in co gach chan
+                    }
+                    else
+                    {
+                        echo '
                     <a href="product.php?page='.$i.'&categoryID='.$_GET["categoryID"].'">'.$i.'</a>
-                ';
+                ';//khong co gach chan
+                    }
+                    
+            
                    }
                    else{
                     if($i == $page) //neu la trang hien tai

@@ -64,7 +64,7 @@
                                     <?php
                                         foreach($categoriesData as $dt)
                                         {
-                                            echo '<li><a href="product.php" id="'.$dt["id"].'">'.$dt["name"].'</a></li>';
+                                            echo '<li><a href="product.php?page=1&categoryID='.$dt["id"].'" id="'.$dt["id"].'">'.$dt["name"].'</a></li>';
                                             echo '<script>console.log(document.querySelector(".drop-down-content"))</script>';
                                         }
                                     ?>

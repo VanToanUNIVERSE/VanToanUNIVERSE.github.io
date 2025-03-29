@@ -13,7 +13,7 @@
         $usernameList = array_column($usernamesData, "username");
         if(in_array($username, $usernameList))
         {
-            $_SESSION["error"] = "Username da ton tai";
+            $_SESSION["error"] = "Tên đăng nhập đã tồn tại";
             header("Location: signup.php");
             exit();
         }
@@ -45,21 +45,21 @@
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
             <i class="fa-solid fa-paper-plane"></i>
             <div class="input-group">
-                <label for="username">User name: </label>
-                <input name="username" type="text" placeholder="Enter your user name" id="username" onkeyup="validateUsername()">
+                <label for="username">Tên đăng nhập: </label>
+                <input name="username" type="text" placeholder="Nhập tên đăng nhập" id="username" onkeyup="validateUsername()">
                 <span id="username-error"><?php echo isset($usernameError) ? $usernameError : '' ?></span>
             </div>
             <div class="input-group">
-                <label for="password">Password: </label>
-                <input name="password" type="password" placeholder="Enter your password" id="password" onkeyup="validatePassword()">
+                <label for="password">Mật khẩu: </label>
+                <input name="password" type="password" placeholder="Nhập mật khẩu" id="password" onkeyup="validatePassword()">
                 <span id="password-error"><?php echo isset($passwordError) ? $passwordError : '' ?></span>
             </div> 
             <div class="input-group">
-                <label for="confirm-password">Confirm password: </label>
-                <input name="confirmPassword" type="password" placeholder="Confirm your password" id="confirm-password" onkeyup="validateConfirmPassword()">
+                <label for="confirm-password">Nhập lại mật khẩu: </label>
+                <input name="confirmPassword" type="password" placeholder="Nhập lại mật khẩu" id="confirm-password" onkeyup="validateConfirmPassword()">
                 <span id="confirm-password-error"></span>
             </div> 
-            <button name="submit" type="submit" onclick="validateSignup(event);">Sign up</button>
+            <button name="submit" type="submit" onclick="validateSignup(event);">Đăng kí</button>
             <span id="signup-error" class="submit-error"></span>
             <?php
             if(isset($_SESSION["error"]))
@@ -75,7 +75,8 @@
             unset($_SESSION['success']);      
             ?>
             
-            <a href="login.php">Have a count? Login</a>
+            <a href="login.php">Bạn đã có tài khoản?</a>
+
         </form>
     </div>
     <script src="js/login-signup.js"></script>

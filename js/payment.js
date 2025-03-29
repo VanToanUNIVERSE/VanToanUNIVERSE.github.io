@@ -414,13 +414,15 @@ function deleteCard(cartKey) //ham xoa AJAX
     {
         if(xhr.readyState === 4 && xhr.status === 200)
         {
+            const response = xhr.responseText;
+            console.log(response);
             card.style.display = 'none';
-            
+            document.querySelector(".total-price").setAttribute("data-total-price", response);
             console.log(document.getElementById(cartKey));
         }
         
     }
-    xhr.send("cartKey=" + cartKey);
+    xhr.send("action=deleteCard&cartKey=" + cartKey);
 }
 
 function deleteCardUI(cartKey)
@@ -447,9 +449,11 @@ if(!productList.querySelector(".card")) // neu chua co san pham khong hien thi n
     paymentButton.style.display = "none";
 }
 
-function Payment(wallet, orderPrice) //ham thanh toan AJAX
+function Payment(wallet) //ham thanh toan AJAX
 {   let status = "Chưa thanh toán";
     const checkedPayment = document.querySelector('input[name="payment-method"]:checked').value;
+    let orderPrice = document.querySelector(".total-price").getAttribute("data-total-price");
+    console.log(orderPrice);
     if(checkedPayment == "wallet")
     {
         status = "Đã thanh toán";

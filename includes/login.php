@@ -26,9 +26,9 @@
         $password = trim($_POST["password"]);
         foreach($usersData as $userData) 
         {
-            echo $userData["username"].$userData["password"];
             if($userData["username"] == $username && $userData["password"] == $password)
             {
+                
                 $_SESSION["userID"] = $userData["id"] ?? '';
                 $_SESSION["username"] = $userData["username"] ?? '';
                 $_SESSION["password"] = $userData["password"] ?? '';
@@ -39,6 +39,11 @@
                 $_SESSION["role"] = $userData["role"] ?? '';
                 $_SESSION["image"] = $userData["image"] ?? 'defaultAvata.png';
                 $_SESSION["wallet"] = $userData["wallet"] ?? '';
+                if($userData["role"] == 1)
+                {
+                    header("Location: ../admin/admin.php");
+                    exit();
+                }
                 header("Location: ../index.php");
                 exit();
             }  

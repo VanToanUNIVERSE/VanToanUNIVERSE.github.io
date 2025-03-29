@@ -56,7 +56,7 @@
                     echo '<p class="error">Thất bại</p>';
                 }
             ?>
-        <a href="../index">Quay về trang chủ</a>
+        <a href="../index.php">Quay về trang chủ</a>
         <a href="../<?php echo $_SESSION["lastPage"]; ?>">OK</a>
     </div>
 </body>

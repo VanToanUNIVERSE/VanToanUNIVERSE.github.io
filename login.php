@@ -15,16 +15,16 @@
         <form action="includes/login.php" method="POST">
             <i class="fa-solid fa-paper-plane"></i>
             <div class="input-group">
-                <label for="username">User name: </label>
-                <input type="text" placeholder="Enter your user name" id="username" name="username" onkeyup="validateUsername()">
+                <label for="username">Tên đăng nhập: </label>
+                <input type="text" placeholder="Nhập tên đăng nhập" id="username" name="username" onkeyup="validateUsername()">
                 <span id="username-error"></span>
             </div>
             <div class="input-group">
-                <label for="password">Password: </label>
-                <input type="password" placeholder="Enter your password" id="password" name="password" onkeyup="validatePassword()">
+                <label for="password">Đăng kí: </label>
+                <input type="password" placeholder="Nhập mật khẩu" id="password" name="password" onkeyup="validatePassword()">
                 <span id="password-error"></span>
             </div> 
-            <button type="submit" name="submit" onclick="validateLogin(event);">Login</button>
+            <button type="submit" name="submit" onclick="validateLogin(event);">Đăng nhập</button>
             <span id="login-error" class="submit-error"></span>
             <?php
                     if(isset($_SESSION["error"]))
@@ -33,7 +33,8 @@
                         unset($_SESSION["error"]);
                     }
                 ?>
-            <a href="signup.php">Don't have account?</a>
+            <a href="signup.php">Chưa có tài khoản?</a>
+            <a href="login.php" style="margin-left: 230px">Quên mật khẩu?</a>
         </form>
     </div>
     <script src="js/login-signup.js"></script>

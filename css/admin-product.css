@@ -1,0 +1,143 @@
+.products-container {
+    flex: 80%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    padding-left: 280px;
+    overflow-x: scroll;
+}
+
+
+
+.products-container div {
+    padding: 10px;
+    box-shadow: 0px 0px 2px #333;
+    background-color: white;
+}
+
+.products-container div .add-product {
+    min-width: 300px;
+    background-color: #142963;
+    color: white;
+    border-radius: 5px;
+    width: 20%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.4s;
+    cursor: pointer;
+    padding: 0;
+}
+
+.products-container div .add-product:hover {
+    background-color: #22C55E;
+}
+
+.products-container div .add-product i {
+    font-size: 22px;
+}
+
+.products-container label input {
+    outline: 1px solid #142963;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.products-container table th,td {
+    padding: 10px;
+}
+
+
+form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #F3F4F6;
+    min-height: 100vh;
+    padding: 30px;
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    justify-content: start;
+    align-items: start;
+    align-content: start;
+    row-gap: 30px;
+    padding-top: 90px;
+    padding-left: 280px;
+    overflow: hidden;
+    transform: translateX(100%);
+    background-color: #142963;
+    transition: all 0.5s ease-in-out;
+}
+
+form h3 {
+    position: absolute;
+    left: 15%;
+    transform: translate(20%, 50%);
+    font-size: 25px;
+}
+
+form .properties {
+    min-height: 70px;
+    background-color: inherit;
+    display: flex;
+    align-items: center;
+}
+
+form .properties label {
+    flex: 30%;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+form .properties input, textarea, select {
+    flex: 70%;
+    text-align: left;
+    outline: none;
+    border: none;
+    
+}
+
+form .properties select {
+    padding: 10px;
+}
+
+form .properties img {
+    border: 1px solid #333;
+    padding: 2px;
+    margin: 0 5px;
+}
+
+form .checkbox {
+    align-items: normal;
+}
+
+#hot {
+    transform: translateX(-46%);
+}
+
+form .operation {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(-100%, -50%);
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+
+#add-product-btn {
+    background: none;
+    padding: 0 5px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    gap: 10px
+}

@@ -19,12 +19,12 @@ function validateUsername()
     const username = usernameInput.value.trim();
     if(username == "")
     {
-        usernameErrorSpan.innerHTML = 'username cannot empty';
+        usernameErrorSpan.innerHTML = 'Tên đăng nhập không thể rổng';
         return false;
     }
     if(username.includes(" "))
     {
-        usernameErrorSpan.innerHTML = 'username canot have spaces';
+        usernameErrorSpan.innerHTML = 'Không được chứa khoảng trắng';
         return false;
     }
     usernameErrorSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
@@ -37,17 +37,22 @@ function validatePassword() {
     const password = passwordInput.value.trim();
     if(password == "")
     {
-        passwordErrorSpan.innerHTML = 'password cannot empty';
+        passwordErrorSpan.innerHTML = 'Không thể trống';
         return false;
     }
+    if(password.length < 8)
+        {
+            passwordErrorSpan.innerHTML = 'Ít nhất 8 kí tự';
+            return false;
+        }
     if(password.includes(" "))
     {
-        passwordErrorSpan.innerHTML = 'password cannot have spaces';
+        passwordErrorSpan.innerHTML = 'Khôn được chứa khoảng trắng';
         return false;
     }
     if(!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/))
         {
-            passwordErrorSpan.innerHTML = 'have at least 1 leter and 1 num';
+            passwordErrorSpan.innerHTML = 'Phải có chữ và số';
             return false;
         }
     passwordErrorSpan.innerHTML = '<i class="fa-solid fa-check"></i>';
@@ -59,7 +64,7 @@ function validateConfirmPassword() {
     const password = passwordInput.value.trim();
     if(confirmPassword != password) 
     {
-        confirmPasswordErrorSpan.innerHTML = "not match";
+        confirmPasswordErrorSpan.innerHTML = "Không khớp";
         return false;
     }
     else 
@@ -73,7 +78,7 @@ function validateLogin(e) {
     if(!validateUsername() || !validatePassword()) 
     {
         e.preventDefault();
-        loginErrorSpan.innerHTML = 'please fix error';
+        loginErrorSpan.innerHTML = 'Vui lòng sửa những lỗi ở trên';
         setTimeout(() => {loginErrorSpan.innerHTML = ''}, 2000)
         return false;
     }
@@ -85,7 +90,7 @@ function validateSignup(e) {
     if(!validateUsername() || !validatePassword() || !validateConfirmPassword()) 
         {
             e.preventDefault();
-            sigupErrorSpan.innerHTML = 'please fix error';
+            sigupErrorSpan.innerHTML = 'Vui lòng sửa những lỗi ở trên';
             setTimeout(() => {sigupErrorSpan.innerHTML = ''}, 2000)
             return false;
         }

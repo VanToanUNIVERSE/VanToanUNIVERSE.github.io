@@ -21,19 +21,24 @@
         {
             $_SESSION["order-price"] += $product["productPrice"] * $product["productQuantity"];
         }
+        
     }
     
 
     //xoa sp
     if($_SERVER["REQUEST_METHOD"] == "POST")
     {
-        if(isset($_POST["cartKey"]))
+        if(isset($_POST["cartKey"]) && isset($_POST["action"]) && $_POST["action"] == "deleteCard")
         {
             if(isset($_SESSION["cart"][$cartKey]))
             {
 
                 $_SESSION["order-price"] -= $_SESSION["cart"][$cartKey]["productPrice"] * $_SESSION["cart"][$cartKey]["productQuantity"];
+                $orderPrice = $_SESSION["order-price"];    
                 unset($_SESSION["cart"][$cartKey]);
+                ob_clean();
+                echo $orderPrice;
+                exit();
             }
         }
         
@@ -130,7 +135,7 @@
                 "delivery" => '
                             <p class="delivery-id">'.$orderID.'</p>
                                 <p class="delivery-status" id="'.$orderID.'-status">Chờ xác nhận</p>
-                                <p class="delivery-price">'.number_format($orderPrice, 0, ',', '.').' VNĐ</p>
+                                <p class="delivery-price">'.number_format($_SESSION["order-price"], 0, ',', '.').' VNĐ</p>
                                 <p class="delivery-create-time">'.$createTime.'</p>
                                 <div class="delivery-icons">
                                     <button type="button" onclick=\'showOrderDetails("'.$orderID.'")\'><i class="fa-solid fa-eye" title="Xem chi tiết đơn"></i></button>
@@ -465,7 +470,7 @@
                
                         if(isset($_SESSION["userID"]))
                         {
-                            echo 'Payment('.$_SESSION["wallet"].', '.$_SESSION["order-price"].')';
+                            echo 'Payment('.$_SESSION["wallet"].')';
                         }
                         else
                         {
