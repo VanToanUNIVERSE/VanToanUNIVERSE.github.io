@@ -7,6 +7,7 @@
     position: relative;
     padding-left: 280px;
     overflow-x: scroll;
+    backdrop-filter: blur(5px);
 }
 
 
@@ -64,32 +65,36 @@ form {
     justify-content: start;
     align-items: start;
     align-content: start;
-    row-gap: 30px;
+    gap: 30px;
     padding-top: 90px;
     padding-left: 280px;
     overflow: hidden;
     transform: translateX(100%);
     background-color: #142963;
     transition: all 0.5s ease-in-out;
+    position: fixed;
 }
 
 form h3 {
     position: absolute;
     left: 15%;
-    transform: translate(20%, 50%);
+    transform: translate(30%, 50%);
     font-size: 25px;
 }
 
 form .properties {
-    min-height: 70px;
+    min-height: 50px;
     background-color: inherit;
     display: flex;
     align-items: center;
+    box-shadow: 0px 0px 2px #333;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 form .properties label {
     flex: 30%;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
 }
 
@@ -98,7 +103,6 @@ form .properties input, textarea, select {
     text-align: left;
     outline: none;
     border: none;
-    
 }
 
 form .properties select {
