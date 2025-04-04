@@ -7,7 +7,7 @@
     }
     
 
-    if(isset($_POST["submit"]))
+    if(isset($_POST["submit"]))//CẬP NHẬT THÔNG TIN CÁ NHÂN
     {
         $id = $_SESSION["userID"]; // gan id
         $fullName  = !empty($_POST["fullName"]) ? $_POST["fullName"] : $_SESSION["fullName"];
@@ -37,11 +37,23 @@
             $_SESSION["phone"] = $phone;
             $_SESSION["address"] = $address;
             $_SESSION["lastPage"] = "profile.php";
+
+            if(isset($_FILES["image"]) && !empty($_FILES["image"]["name"]))
+            {
+                $sql = "update users set image = ? where id = ?";
+                $statement = $connection->prepare($sql);
+                $statement->bindParam(1, $_FILES["image"]["name"]);
+                $statement->bindParam(2, $id);
+                $statement->execute();
+                $_SESSION["image"] = $_FILES["image"]["name"];
+
+                move_uploaded_file($_FILES["image"]["tmp_name"], "images/avata/".$_FILES["image"]["name"]);
+            }
             header("Location: includes/message.php?success=1");
             exit();
-            }
-            header("Location: ./profile.php");
-            exit();
+        }
+        header("Location: ./profile.php");
+        exit();
     }
 ?>
 
@@ -147,7 +159,7 @@
         </div>
 
         <div class="edit-form-container">
-            <form action="" method="post" id="submit-form">
+            <form action="" method="post" id="submit-form" enctype="multipart/form-data">
                 <h2>Chỉnh sửa thông tin</h2>
                 <div class="edit-info-container">
                     <label for="full-name">Họ tên: </label>
@@ -162,15 +174,18 @@
                     <input type="text" name="phone" id="phone">
                 </div>
                 <div class="edit-info-container">
-                    <label for="address">Address: </label>
+                    <label for="address">Địa chỉ: </label>
                     <input type="text" name="address" id="address">
+                </div>
+                <div class="edit-info-container">
+                    <label for="address">Hình ảnh: </label>
+                    <input type="file" name="image" id="image" accept="image/*">
                 </div>
                 <!-- <div class="edit-info-container">
                     <label for="full-name">Họ tên</label>
                     <input type="text" name="fullName" id="full-name">
-                </div> -->
-                
-                <button name="submit" id="update-btn" type="submit">Cập nhật</button>
+                </div>-->
+                <button name="submit" id="update-btn" type="submit" onclick="validateForm(event)">Cập nhật</button>
                 <span id="submit-error"></span>
                 <button id="close-btn" onclick="Close(event)">X</button>
             </form>

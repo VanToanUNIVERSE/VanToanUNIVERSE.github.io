@@ -177,4 +177,10 @@ main {
     background-color: rgb(255, 75, 174);
     box-shadow: 0px 0px 10px #333;
     border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.search button:active {
+    transform: scale(0.9);
 }

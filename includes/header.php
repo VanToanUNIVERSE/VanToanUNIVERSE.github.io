@@ -38,7 +38,6 @@
         <div class="more-content">
             <a href="<?php echo $userID ? "includes/logout.php" : "login.php" ?>"><?php echo $userID ? "Đăng xuất" : "Đăng nhập" ?></a>
             <a href="../payment.php">Giỏ hàng</a>
-            <a href="">Sản phẩm yêu thích</a>
             <a href="">Nạp tiền</a>
             <button class="close-btn" onclick="showAndClose('more-content')"><i class="fa-solid fa-xmark"></i></button>
         </div>

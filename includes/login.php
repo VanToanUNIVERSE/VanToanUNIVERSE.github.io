@@ -1,6 +1,5 @@
 <?php
     session_start();
-    
     require "database.php";
     $sql = "select * from users";
     try 
@@ -42,6 +41,7 @@
                 if($userData["role"] == 1)
                 {
                     header("Location: ../admin/admin.php");
+                    $_SESSION["image"] = $userData["image"] ?? 'defaultAvata.png';
                     exit();
                 }
                 header("Location: ../index.php");

@@ -310,6 +310,10 @@ function clearCostomer()
 
 function addCostomer()
 {
+    if(!validateAddCostomer())
+    {
+        return;
+    }
     const fullName = document.getElementById("name").value;
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -363,6 +367,10 @@ function deleteCostomer(userID, button)
 
 function updateCostomer(userID)
 {   
+    if(!validateAddCostomer())
+    {
+        return;
+    }
     const fullName = document.getElementById("name").value;
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -382,14 +390,7 @@ function updateCostomer(userID)
     formData.append("phone", phone);
     formData.append("address", address);
     formData.append("wallet", wallet);
-    if(!image)
-    {
-        alert("rong");
-    }
-    else
-    {
-        formData.append("image", image);
-    }
+    formData.append("image", image);
     formData.append("userID", userID);
 
 
@@ -399,6 +400,149 @@ function updateCostomer(userID)
         if(xhr.readyState == 4 && xhr.status == 200)
         {
             alert(xhr.responseText);
+            location.reload();
+        }
+    }
+    xhr.send(formData);
+}
+
+function validateAddCostomer()
+{
+    const fullName = document.getElementById("name").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const address = document.getElementById("address").value;
+    const wallet = document.getElementById("wallet").value;
+    const image = document.getElementById("image").files;
+
+    if(fullName.trim() == "" || username == "" || password == "" || email == "" || phone == "" || address.trim() == "" || wallet == "")
+    {
+        alert("Vui lòng điển đủ thông tin");
+        return false;
+    }
+    if (!wallet.match(/^\d{1,3}(\.\d{3})*$|^\d+$/))
+    {
+        alert("Ví tiền phải là số");
+        return false;
+    }
+    if(!phone.match(/^[0-9]+$/))
+    {
+        alert("Số điện thoại phải là số");
+        return false;
+    }
+    return true;
+}
+
+function searchCostomer()
+{
+    const searchQuery = document.getElementById("search").value;
+    const formData = new FormData();
+    formData.append("searchCostomer", searchQuery);
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../admin/admin.php");
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4 && xhr.status == 200)
+        {
+            const table = document.querySelector("table");
+            table.innerHTML = "";
+            const response = xhr.responseText;
+            table.innerHTML = response;
+        }
+    }
+    xhr.send(formData);
+}
+
+//QL ĐƠN HÀNG
+
+function displayOrderDetails(orderID, action)
+{
+    display();
+    const formData = new FormData();
+    formData.append("action", "showOrder")
+    formData.append("orderID", orderID);
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../admin/admin.php");
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4 && xhr.status == 200)
+        {
+            const form = document.querySelector("form");
+            form.innerHTML = xhr.responseText;
+            if(action == "show")
+                {
+                    form.querySelectorAll("input, select, textarea").forEach(element => {
+                        element.disabled = true;
+                    });
+                    document.getElementById("update-btn").disabled = true;
+                    document.getElementById("update-btn").style.background = "#333";
+                    document.getElementById("update-btn").style.cursor = "no-drop";
+                }
+        }
+    }
+    xhr.send(formData);
+}
+
+function updateOrder(orderID)
+{
+    if(!validateUpdateOrder())
+    {
+        return false;
+    }
+    const price = document.getElementById("price").value;
+    const status = document.getElementById("status").value;
+    const method = document.getElementById("method").value;
+    const paymentStatus = document.getElementById("payment-status").value;
+
+    const formData = new FormData();
+    formData.append("action", "updateOrder");
+    formData.append("orderID", orderID);
+    formData.append("orderPrice", price);
+    formData.append("orderStatus", status);
+    formData.append("orderMethod", method);
+    formData.append("paymentStatus", paymentStatus);
+    
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../admin/admin.php");
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4 && xhr.status == 200)
+        {
+            alert(xhr.responseText);
+            location.reload();
+        }
+    }
+    xhr.send(formData);
+}
+
+function validateUpdateOrder()
+{
+    const price = document.getElementById("price").value;
+    if(price == "")
+    {
+        alert("Giá không được rổng");
+        return false;
+    }
+    if (!price.match(/^\d{1,3}(\.\d{3})*$|^\d+$/))
+    {
+        alert("Giá không hợp lệ");
+        return false;
+    }
+    return true;
+}
+
+function deleteOrder(orderID, button)
+{
+    const formData = new FormData();
+    formData.append("action", "deleteOrder");
+    formData.append("orderID", orderID);
+
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "../admin/admin.php");
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState == 4 && xhr.status == 200)
+        {
+            button.closest("tr").remove();
+            alert("Xóa thành công "+ xhr.responseText);
         }
     }
     xhr.send(formData);

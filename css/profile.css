@@ -184,7 +184,7 @@ form {
     flex-direction: center;
 }
 .edit-info-container label{
-    flex: 10%;
+    flex: 20%;
     text-align: left;
     display: flex;
     justify-content: end;
@@ -192,7 +192,7 @@ form {
     padding-right: 20px;
 }
 .edit-info-container input{
-    flex: 90%;
+    flex: 80%;
     background: none;
     border: none;
     outline: none;
@@ -230,9 +230,12 @@ form {
 }
 
 #submit-error {
-    color: red;
+    color: rgb(249, 245, 245);
     position: absolute;
     bottom: 40%;
     left: 50%;
     transform: translateX(-50%);
+    background-color: #33333370;
+    padding: 20px;
+    display: none;
 }

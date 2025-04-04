@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require "../includes/database.php";
     //LOAD NOI DUNG TUY THEO TRANG
     $sql = "select products.*, product_images.image from products
@@ -313,7 +314,7 @@
         {
 
             $name = $_POST["productName"];
-            $price = str_replace('.', '', $_POST['productPrice']);;
+            $price = str_replace('.', '', $_POST['productPrice']);
             $hot = $_POST["productHot"] == True ? 1 : 0;
             $size = $_POST["productSize"];
             $describe = $_POST["productDescribe"];
@@ -472,7 +473,7 @@
             $email = $_POST["email"];
             $phone = $_POST["phone"];
             $address = $_POST["address"];
-            $wallet = $_POST["wallet"];
+            $wallet = str_replace('.', '', $_POST["wallet"]);
             $id = $_POST["userID"];
 
             $sql = "UPDATE users
@@ -487,7 +488,6 @@
             $statement->bindParam(5, $phone);
             $statement->bindParam(6, $address);
             $statement->bindParam(7, $wallet);
-            
             $statement->bindParam(8, $id);
             $statement->execute();
             
@@ -509,6 +509,218 @@
             exit();
         }
     }
+
+    //TIM KIẾM NGƯỜI DÙNG
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        if(isset($_POST["searchCostomer"]))
+        {
+            $searchQuery = "%".$_POST["searchCostomer"]."%";
+            $sql = "select * from users where username like ? or fullName like ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $searchQuery);
+            $statement->bindParam(2, $searchQuery);
+            $statement->execute();
+            $Data = $statement->fetchAll();
+            ob_clean();
+            echo '<tr><th>Mã người dùng</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Mật khẩu</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Ví</th></tr>';
+                        foreach($Data as $user)
+                        {
+                        echo '<tr>
+                        <td>'.$user["id"].'</td>
+                        <td>'.$user["username"].'</td>
+                        <td>'.$user["password"].'</td>
+                        <td>'.$user["phone"].'</td>
+                        <td>'.$user["address"].'</td>
+                        <td>'.number_format($user["wallet"], 0, ',', '.').' VNĐ</td>
+                        <td class="nowrap">
+                            <button onclick="displayCostomerDetails(\''.$user["id"].'\', \'updateCostomer\')"><i class="fa-solid fa-wrench" title="Chỉnh sửa"></i></button>
+                            <button type="button" onclick="deleteCostomer('.$user["id"].', this)"><i class="fa-solid fa-trash" title="Xóa sản phẩm"></i></button>
+                            <button onclick="displayCostomerDetails(\''.$user["id"].'\', \'showCostomer\')"><i class="fa-solid fa-eye" title="Xem chi tiết"></i></button>
+                        </td>
+                        </tr>';
+                        }
+            exit();
+        }
+    }
+    
+    //XEM DƠN HÀNG
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        if(isset($_POST["action"]) && $_POST["action"] == "showOrder")
+        {
+            $orderID = $_POST["orderID"];
+            $sql = "select orders.*, payments.status as paymentStatus, payments.method 
+            FROM orders LEFT JOIN payments ON orders.id = payments.order_ID
+            WHERE orders.id = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID);
+            $statement->execute();
+            $order = $statement->fetch();
+
+            $sql = "SELECT order_items.* , products.`name`
+            FROM order_items LEFT JOIN products ON order_items.product_ID = products.id
+            WHERE order_items.order_ID = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID);
+            $statement->execute();
+            $orderItems = $statement->fetchAll();
+            ob_clean();
+            echo '<h3>Thông tin đơn hàng</h3>
+                    <div class="properties">
+                        <label for="">Mã đơn hàng</label>
+                        <input id="id" type="text" value="'.$order["id"].'" disabled>
+                    </div>
+                    <div class="properties">
+                        <label for="">Mã người dùng</label>
+                        <input id="user-id" type="text" value="'.$order["user_ID"].'" disabled>     
+                    </div>
+                    <div class="properties">
+                        <label for="">Giá</label>
+                        <input id="price" type="text" value="'.number_format($order["price"], 0, ',', '.').'"> VNĐ
+                    </div>
+                    <div class="properties">
+                        <label for="">Trạng thái đơn</label>
+                        <select id="status">';
+                            $status = ["Chờ xác nhận", "Đang giao", "Giao hàng thành công", "Đã hủy"];
+                            foreach($status as $st)
+                            {
+                                if($st == $order["status"])
+                                {
+                                    echo '<option value="'.$order["status"].'" selected>'.$order["status"].'</option>';
+                                }
+                                else
+                                {
+                                    echo '<option value="'.$st.'">'.$st.'</option>';
+                                }
+                                
+                            }     
+                        echo '</select>
+                        
+                    </div>
+                    <div class="properties">
+                        <label for="">Thời gian tạo</label>
+                        <input id="create-time" type="text" value="'.$order["create_time"].'" disabled>
+                    </div>
+                    <div class="properties">
+                        <label for="">Phương thức thanh toán</label>
+                        <select id="method">';
+                            $method = ["cod", "wallet"];
+                            foreach($method as $mt)
+                            {
+                                if($mt == $order["method"])
+                                {
+                                    echo '<option value="'.$order["method"].'" selected>'.$order["method"].'</option>';
+                                }
+                                else
+                                {
+                                    echo '<option value="'.$mt.'">'.$mt.'</option>';
+                                }
+                                
+                            }     
+                        echo '</select>
+                    </div>
+                    <div class="properties">
+                        <label for="">Trạng thái thanh toán</label>
+                        <select id="payment-status">';
+                            $paymentStatus = ["Đã thanh toán", "Chưa thanh toán"];
+                            foreach($paymentStatus as $pst)
+                            {
+                                if($pst == $order["paymentStatus"])
+                                {
+                                    echo '<option value="'.$order["paymentStatus"].'" selected>'.$order["paymentStatus"].'</option>';
+                                }
+                                else
+                                {
+                                    echo '<option value="'.$pst.'">'.$pst.'</option>';
+                                }
+                                
+                            }     
+                        echo '</select>
+                    </div>
+                    <div class="product-container-properties">
+                    <b>Các sản phẩm</b>
+                        <table>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Kích cở</th>
+                                <th>Giá</th>
+                            </tr>';
+                            foreach($orderItems as $item)
+                            {
+                                echo '
+                                <tr>
+                                    <td>'.$item["name"].'</td>
+                                    <td>'.$item["quantity"].'</td>
+                                    <td>'.$item["size"].'</td>
+                                    <td>'.number_format($item["price"], 0, ',', '.').' VNĐ</td>
+                                </tr>';
+                            }
+                            
+                        echo '</table>
+                    </div>
+                    <div class="operation">
+                        <button class="btn" type="button" onclick="undisplay()"><i class="fa-solid fa-xmark"></i> Hủy</button>
+                        <button class="btn" id="update-btn" type="button" onclick="updateOrder(\''.$order["id"].'\')"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                    </div>';
+            exit();
+        }
+    }
+
+    //SUA DON HANG
+    if($_SERVER["REQUEST_METHOD"] == "POST") 
+    {
+        if(isset($_POST["action"]) && $_POST["action"] == "updateOrder")
+        {
+            $orderID = $_POST["orderID"];
+            $price = str_replace('.', '', $_POST["orderPrice"]);
+            $status = $_POST["orderStatus"];
+            $method = $_POST["orderMethod"];
+            $paymentStatus = $_POST["paymentStatus"];
+
+            $sql = "update orders 
+            SET price = ?, `status` = ?
+            WHERE id = ?
+            ";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $price);
+            $statement->bindParam(2, $status);
+            $statement->bindParam(3, $orderID);
+            $statement->execute();
+
+            $sql = "update payments set method = ?, status = ? where order_ID = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $method);
+            $statement->bindParam(2, $paymentStatus);
+            $statement->bindParam(3, $orderID);
+            $statement->execute();
+
+            ob_clean();
+            echo "Cap nhat thanh cong";
+            exit();
+        }
+    }
+
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+        if(isset($_POST["action"]) && $_POST["action"] == "deleteOrder")
+        {
+            $orderID = $_POST["orderID"];
+            $sql = "DELETE FROM orders WHERE id = ?";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(1, $orderID, PDO::PARAM_INT); 
+            $statement->execute();
+            ob_clean();
+            echo $orderID;
+            exit();
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -524,7 +736,7 @@
 <body>
     <div class="management-container">
         <div class="info-container">
-            <img src="../images/avata/defaultAvata.png" alt="Avata" width="100px" height="100px">
+            <img src="../images/avata/<?php echo $_SESSION["image"] ?>" alt="Avata" style="width: 100px; height: 100px;">
             <p>Nguyễn Văn Toàn</p>
         </div>
         <hr>
@@ -601,20 +813,14 @@
             }
             if(isset($_GET["page"]) && $_GET["page"] == "order") // LOAD NỘI DUNG CỦA TRANG QLORDER
             {
-                echo '<div>
-                <div class="add-product">
-                    <i class="fa-solid fa-plus"></i>
-                    <p>Thêm đơn hàng mới</p>
-                </div>
-                </div> 
+                echo '
+                
                 <h3>Danh sách đơn hàng</h3>
                 <label for="search">
-                    Tìm kiếm <input type="text" name="search" id="search" onkeyup="searchProduct()"> 
+                    Tìm kiếm <input type="text" name="search" id="search" onkeyup=""> 
                     <button><i class="fa-solid fa-magnifying-glass"></i></button>
                 </label>
                 <table>';
-
-
                 echo '<tr>
                 <th>Mã đơn hàng</th>
                 <th>Mã người dùng</th>
@@ -644,9 +850,9 @@
                 <td>'.$order["create_time"].'</td>
                 <td>'.$order["paymentStatus"].'</td>
                 <td class="nowrap">
-                    <button><i class="fa-solid fa-wrench" title="Chỉnh sửa"></i></button>
-                    <button><i class="fa-solid fa-trash" title="Xóa sản phẩm"></i></button>
-                    <button><i class="fa-solid fa-eye" title="Xem chi tiết"></i></button>
+                    <button onclick="displayOrderDetails(\''.$order["id"].'\', \'update\')"><i class="fa-solid fa-wrench" title="Chỉnh sửa"></i></button>
+                    <button onclick="deleteOrder(\''.$order["id"].'\', this)"><i class="fa-solid fa-trash" title="Xóa sản phẩm"></i></button>
+                    <button  onclick="displayOrderDetails(\''.$order["id"].'\', \'show\')"><i class="fa-solid fa-eye" title="Xem chi tiết"></i></button>
                 </td>
                 </tr>';
                 }
@@ -661,7 +867,7 @@
                 </div> 
                 <h3>Danh sách người dùng</h3>
                 <label for="search">
-                    Tìm kiếm <input type="text" name="search" id="search"> 
+                    Tìm kiếm <input type="text" name="search" id="search" onkeyup="searchCostomer()"> 
                     <button><i class="fa-solid fa-magnifying-glass"></i></button>
                 </label>
                 <table>';
@@ -684,7 +890,7 @@
                 <td>'.$user["password"].'</td>
                 <td>'.$user["phone"].'</td>
                 <td>'.$user["address"].'</td>
-                <td>'.number_format($user["wallet"]).' VNĐ</td>
+                <td>'.number_format($user["wallet"], 0, ',', '.').' VNĐ</td>
                 <td class="nowrap">
                     <button onclick="displayCostomerDetails(\''.$user["id"].'\', \'updateCostomer\')"><i class="fa-solid fa-wrench" title="Chỉnh sửa"></i></button>
                     <button type="button" onclick="deleteCostomer('.$user["id"].', this)"><i class="fa-solid fa-trash" title="Xóa sản phẩm"></i></button>
@@ -844,6 +1050,49 @@
                 <div class="operation">
                     <button class="btn" type="button" onclick="undisplay()"><i class="fa-solid fa-xmark"></i> Hủy</button>
                     <button class="btn" type="button" onclick="addCostomer()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+                </div>
+                    ';
+            }
+
+            if(isset($_GET["page"]) && $_GET["page"] == "costomer") // LOAD NOI DUNG FORM ORDERS
+            {
+                echo '
+                <h3>Thông tin đơn hàng</h3>
+                <div class="properties">
+                    <label for="">Mã đơn hàng</label>
+                    <input id="id" type="text" value="">
+                </div>
+                <div class="properties">
+                    <label for="">Mã người dùng</label>
+                    <input id="user-id" type="text">     
+                </div>
+                <div class="properties">
+                    <label for="">Giá</label>
+                    <input id="price" type="text" value="">
+                </div>
+                <div class="properties">
+                    <label for="">Trạng thái đơn</label>
+                    <input id="status" type="text" value="">
+                </div>
+                <div class="properties">
+                    <label for="">Thời gian tạo</label>
+                    <input id="create-time" type="text" value="">
+                </div>
+                <div class="properties">
+                    <label for="">Phương thức thanh toán</label>
+                    <input id="method" type="text" value="">
+                </div>
+                <div class="properties">
+                    <label for="">Trạng thái thanh toán</label>
+                    <input id="payment-status" type="text" value="">
+                </div>
+                <div class="properties">
+                    <label for="">Ví</label>
+                    <input id="wallet" type="text" value="">
+                </div>
+                <div class="operation">
+                    <button class="btn" type="button" onclick="undisplay()"><i class="fa-solid fa-xmark"></i> Hủy</button>
+                    <button class="btn" type="button" onclick=""><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
                 </div>
                     ';
             }
