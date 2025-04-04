@@ -66,8 +66,6 @@
         $offset = (int)(($page - 1) * 8);
         $totalPages = ceil($productQuantity/8);
 
-        
-
 
         $sql = "SELECT products.*, product_images.image
         FROM products 
@@ -81,7 +79,32 @@
         $statement->execute();
         $productList = $statement->fetchAll();
 
-        
+    }
+
+    if(isset($_GET["searchInput"]))
+    {
+
+        $sql = "select count(*) from products where products.category_id = ?"; // tạo lại trang 
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(1, $_GET["categoryID"]);
+        $statement->execute();
+        $productQuantity = $statement->fetchColumn();
+        $page = isset($_GET["page"]) ? (int)$_GET['page'] : 1;
+        if($page < 1) $page = 1;
+        $offset = (int)(($page - 1) * 8);
+        $totalPages = ceil($productQuantity/8);
+
+
+        $searchInput = $_GET["searchInput"];
+        $searchQuery = "%".$searchInput."%";
+            $sql = "select products.*, product_images.image from products
+            left join product_images on products.id = product_images.product_id and product_images.is_main = 1 where products.id like :search or products.name like :search LIMIT 8 OFFSET :offset";
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(":search", $searchQuery);
+        $statement->bindParam(":search", $searchQuery);
+        $statement->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+        $productList = $statement->fetchAll();
     }
 ?>
 
@@ -122,6 +145,11 @@
             ?>
            
         </div>
+
+        <form class="search" method="get" action="<?php echo $_SERVER["PHP_SELF"] ?>">
+            <input id="search-input" name="searchInput" type="text">
+            <button id="search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+            </form>
 
         <div class="products-container">
             <div class="category-name"><?php 

@@ -149,3 +149,32 @@ main {
     
 }
 
+.search {
+    display: flex;
+    width: 60%;
+    margin: 0 auto;
+    transform: translateY(-100%);
+    font-size: 22px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+
+
+.search input {
+
+    padding: 15px;
+    outline: none;
+    border: none;
+    box-shadow: 0px 0px 10px #7676768b;
+}
+.search button {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 15px 20px;
+    background-color: rgb(255, 75, 174);
+    box-shadow: 0px 0px 10px #333;
+    border-radius: 10px;
+}
