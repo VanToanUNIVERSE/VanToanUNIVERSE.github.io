@@ -34,7 +34,7 @@
                     }
                 ?>
             <a href="signup.php">Chưa có tài khoản?</a>
-            <a href="login.php" style="margin-left: 230px">Quên mật khẩu?</a>
+            
         </form>
     </div>
     <script src="js/login-signup.js"></script>
