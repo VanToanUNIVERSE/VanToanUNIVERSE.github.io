@@ -115,7 +115,6 @@ function addProduct() //THÊM SẢN PHẨM
     formData.append("productQuantity", quantity);
     formData.append("categoryID", categoryID);
     formData.append("subcategoryID", subcategoryID);
-    alert(subcategoryID);
     xhr = new XMLHttpRequest();
     xhr.open("POST", "../admin/admin.php");
     xhr.onreadystatechange = function()

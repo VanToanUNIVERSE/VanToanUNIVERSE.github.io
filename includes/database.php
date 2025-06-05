@@ -8,7 +8,6 @@
     {
         $connection = new PDO("mysql:host=". DATABASE_SERVER.";dbname=".DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD);
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        echo "<script>console.log('ket noi thanh cong')</script>";
     }
     catch(PDOException $e)
     {
